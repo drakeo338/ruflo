@@ -695,7 +695,7 @@ function validatePersonalWorkforceBindings(
     const notification = input.action === 'workforce.personal.notify';
     const parts = suffix?.split('/');
     const valid = notification ? (parts?.length === 4 && parts[0] === 'workflows'
-      && WORKFLOW_ID_RE.test(parts[1]) && parts[2] === 'notifications'
+      && typeof parts[1] === 'string' && WORKFLOW_ID_RE.test(parts[1]) && parts[2] === 'notifications'
       && (parts[3] === 'work.queued' || parts[3] === 'work.completed')) : consent ? suffix === 'consent' : (
       (input.action === 'workforce.personal.read' && suffix === 'workflows')
       || (suffix?.startsWith('workflows/') && WORKFLOW_ID_RE.test(suffix.slice('workflows/'.length)))

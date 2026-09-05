@@ -73,7 +73,7 @@ function observation(overrides: Record<string, unknown> = {}): Record<string, un
 
 describe('product action vocabulary', () => {
   it('recognizes the complete closed vocabulary and rejects lookalikes', () => {
-    expect(PRODUCT_ACTIONS).toHaveLength(35);
+    expect(PRODUCT_ACTIONS).toHaveLength(36);
     for (const action of PRODUCT_ACTIONS) expect(isProductAction(action)).toBe(true);
     expect(isProductAction('cog.proposal.create ')).toBe(false);
     expect(isProductAction('ruview.raw.read')).toBe(false);
