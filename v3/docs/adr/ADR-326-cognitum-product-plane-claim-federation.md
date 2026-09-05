@@ -649,3 +649,24 @@ transactional execution, durable replay storage, receipt resolution, identity
 proof, or service availability. Vendoring this dependency-free module requires
 its exact source commit and content hash; it does not imply a published package,
 configured service, deployment, or release authorization.
+
+### 2026-09-05 addendum: separately reviewed private notification
+
+`workforce.personal.notify` extends the same v1 envelope. It requires all mutation
+bindings plus a validation receipt, Slack issuer, ruClip audience/source, source
+kind `ruclip/personal-notification`, and the same canonical owner namespace. Its
+sole resource suffix is `workflows/<work-id>/notifications/work.queued` or
+`workflows/<work-id>/notifications/work.completed`. Lifetime remains at most five
+minutes. No existing valid action changes, and unknown actions remain invalid.
+
+This is a separately reviewed one-event notification authorization. Adapters must
+verify the exact human decision and current notification consent, canonical owner,
+original work input digest, consent epoch/digest, policy, key and capability before
+pinning the complete signed request immutably per company/work/event. They must
+recheck current authority immediately before delivery and must never replace the
+pinned original with whichever capability is currently available. Work consent
+must already permit notification; this action does not enable consent, authorize
+content access, provider spend, arbitrary channel posts, or a notification pump.
+Pump scheduling requires its own bounded authority. Durable ambiguous-send
+recovery still requires independent evidence; this profile does not promise
+external exactly-once delivery. No runtime activation or publication is implied.

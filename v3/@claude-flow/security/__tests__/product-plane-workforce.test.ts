@@ -12,22 +12,23 @@ const tenantRef = { namespace: 'ruclip-company' as const, id: 'T123/cognitum' };
 const root = 'ruclip://workspaces/T123/companies/cognitum/humans/U123/';
 function envelope(action = 'workforce.personal.request'): Record<string, unknown> {
   const consent = action === 'workforce.personal.consent';
+  const notify = action === 'workforce.personal.notify';
   return {
     schemaVersion: 'cognitum.action.v1', eventId: 'event-1', issuer: 'slack', audience: 'ruclip',
     subject: { namespace: 'slack-user', id: 'T123/U123' }, tenantRef, action,
-    resourceRefs: [root + (consent ? 'consent' : 'workflows/work-1')],
+    resourceRefs: [root + (notify ? 'workflows/work-1/notifications/work.completed' : consent ? 'consent' : 'workflows/work-1')],
     requestDigest: digest, idempotencyKey: 'operation-1', correlationId: 'correlation-1',
     authoritativeSource: {
       authority: 'ruclip', tenantRef,
-      sourceType: consent ? 'ruclip/personal-consent' : 'ruclip/personal-workflow',
+      sourceType: notify ? 'ruclip/personal-notification' : consent ? 'ruclip/personal-consent' : 'ruclip/personal-workflow',
       sourceId: 'source-1', sourceVersion: '1', sourceDigest: digest,
     },
     policyReceiptId: 'policy-1', capabilityId: 'capability-1',
-    ...(consent ? { validationReceiptId: 'human-decision-1' } : {}),
+    ...((consent || notify) ? { validationReceiptId: 'human-decision-1' } : {}),
     occurredAt: '2026-09-05T12:00:00.000Z', expiresAt: '2026-09-05T12:05:00.000Z', privacyClass: 'P1',
   };
 }
-const actions = ['request', 'read', 'cancel', 'consent'].map(a => `workforce.personal.${a}`);
+const actions = ['request', 'read', 'cancel', 'consent', 'notify'].map(a => `workforce.personal.${a}`);
 
 describe('Slack/ruClip personal workforce profile', () => {
   it.each(actions)('accepts a bound %s with the existing envelope version', action => {
@@ -148,3 +149,17 @@ describe('personal workforce local authority checks', () => {
       .toMatchObject({ ok: false, code: 'idempotency_conflict' });
   });
 });
+
+ describe('separately reviewed notification profile', () => {
+  it('requires a decision receipt and exact event resource', () => {
+    const value = envelope('workforce.personal.notify');
+    delete value.validationReceiptId;
+    expect(validateProductActionEnvelope(value).ok).toBe(false);
+    for (const suffix of ['workflows/work-1', 'workflows/work-1/notifications/all', 'workflows/work-1/notifications/work.completed/extra', 'workflows/work-1/notifications/%77ork.completed']) {
+      expect(validateProductActionEnvelope({...envelope('workforce.personal.notify'),resourceRefs:[root+suffix]}).ok).toBe(false);
+    }
+    for (const override of [{issuer:'agentbbs'}, {subject:{namespace:'slack-user',id:'T999/U123'}}, {action:'workforce.personal.request'}]) {
+      expect(validateProductActionEnvelope({...envelope('workforce.personal.notify'),...override}).ok).toBe(false);
+    }
+  });
+ });

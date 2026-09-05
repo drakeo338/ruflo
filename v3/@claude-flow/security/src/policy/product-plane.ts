@@ -47,6 +47,7 @@ export const PRODUCT_ACTIONS = [
   'workforce.personal.read',
   'workforce.personal.cancel',
   'workforce.personal.consent',
+  'workforce.personal.notify',
 ] as const;
 
 export type ProductAction = (typeof PRODUCT_ACTIONS)[number];
@@ -347,6 +348,7 @@ export const ACTION_AUTHORITIES: Readonly<Record<ProductAction, readonly Product
   'workforce.personal.read': ['ruclip'],
   'workforce.personal.cancel': ['ruclip'],
   'workforce.personal.consent': ['ruclip'],
+  'workforce.personal.notify': ['ruclip'],
 };
 
 const NO_SIDE_EFFECT_REQUIREMENTS: ProductActionRequirements = {
@@ -416,6 +418,7 @@ export const PRODUCT_ACTION_REQUIREMENTS: Readonly<Record<ProductAction, Product
   'workforce.personal.read': MUTATION_REQUIREMENTS,
   'workforce.personal.cancel': MUTATION_REQUIREMENTS,
   'workforce.personal.consent': { ...MUTATION_REQUIREMENTS, validationReceipt: true },
+  'workforce.personal.notify': { ...MUTATION_REQUIREMENTS, validationReceipt: true },
   'memory.commit-validated': {
     requestDigest: true,
     contentDigest: true,
@@ -647,7 +650,7 @@ export function validateAuthoritativeReference(
 /** Slack ingress profile; these structural checks never establish a local grant. */
 const PERSONAL_WORKFORCE_ACTIONS = new Set<ProductAction>([
   'workforce.personal.request', 'workforce.personal.read',
-  'workforce.personal.cancel', 'workforce.personal.consent',
+  'workforce.personal.cancel', 'workforce.personal.consent', 'workforce.personal.notify',
 ]);
 export const PERSONAL_WORKFORCE_MAX_TTL_MS = 5 * 60_000;
 const SLACK_HUMAN_REF_RE = /^(T[A-Z0-9]+)\/([UW][A-Z0-9]+)(?![\s\S])/;
@@ -689,7 +692,11 @@ function validatePersonalWorkforceBindings(
     const resource = resources[0];
     const suffix = resource?.startsWith(prefix) ? resource.slice(prefix.length) : undefined;
     const consent = input.action === 'workforce.personal.consent';
-    const valid = consent ? suffix === 'consent' : (
+    const notification = input.action === 'workforce.personal.notify';
+    const parts = suffix?.split('/');
+    const valid = notification ? (parts?.length === 4 && parts[0] === 'workflows'
+      && WORKFLOW_ID_RE.test(parts[1]) && parts[2] === 'notifications'
+      && (parts[3] === 'work.queued' || parts[3] === 'work.completed')) : consent ? suffix === 'consent' : (
       (input.action === 'workforce.personal.read' && suffix === 'workflows')
       || (suffix?.startsWith('workflows/') && WORKFLOW_ID_RE.test(suffix.slice('workflows/'.length)))
     );
@@ -698,7 +705,8 @@ function validatePersonalWorkforceBindings(
     }
   }
   const sourceType = input.action === 'workforce.personal.consent'
-    ? 'ruclip/personal-consent' : 'ruclip/personal-workflow';
+    ? 'ruclip/personal-consent' : input.action === 'workforce.personal.notify'
+      ? 'ruclip/personal-notification' : 'ruclip/personal-workflow';
   if (isRecord(input.authoritativeSource) && input.authoritativeSource.sourceType !== sourceType) {
     issue(issues, '$.authoritativeSource.sourceType', 'unsupported_value', 'source kind must match the personal action');
   }
