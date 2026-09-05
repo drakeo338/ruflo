@@ -306,3 +306,74 @@ receipts, not merely to tolerate them.
 A language-neutral extraction of this protocol, with JSON Schemas, worked examples,
 and a conformance checklist, is maintained at
 [`../spec/witness-receipt-contract.md`](../spec/witness-receipt-contract.md).
+
+## Addendum (2026-09-05): synthetic evaluation evidence without promotion decisions
+
+Status: implemented as an isolated development library; personal service signing
+adapter and activation remain pending. Existing promotion receipt v1, statistical
+gates and ADR-322A semantics are unchanged.
+
+`src/services/flywheel-evaluation-evidence.ts` adds
+`createFlywheelEvaluationEvidence` and `verifyFlywheelEvaluationEvidence`:
+
+```text
+schema: ruflo.flywheel-evaluation-evidence/v1
+domain: ruflo/flywheel-evaluation-evidence/v1
+evidenceKind: synthetic_fixture_comparison
+trialAuthorized: false
+```
+
+This is a distinct evidence record, not a promotion receipt. It reuses the
+existing JCS encoder, SHA-256 references, domain-separated Ed25519 convention and
+paired-score consistency validation. It never computes or includes `accepted`,
+`significant`, `promoted`, `decision`, `gates` or promotion statistics. The
+existing promotion verifier rejects this schema and signing domain; evidence
+verification cannot authorize a trial or select a policy champion.
+
+The closed payload binds an independent review reference, synthetic scope,
+frozen plan and corpus, baseline/candidate references, baseline/candidate/verifier/
+evaluator source hashes, baseline/candidate builds, dependency closure and safety
+envelope. References are strict SHA-256 values. They bind supplied evidence;
+hashes alone do not prove review, build provenance or synthetic data origin.
+The required service adapter must independently resolve and compare those facts.
+
+Selection and held-out task lists are disjoint and unique, with at least two
+tasks each and 32 total at most. Paired scores must cover the held-out list in
+its declared order and lie in [0,1]. Scores are encoded with exactly twelve
+fractional digits. Descriptive means and paired deltas are recomputed from those
+encoded values; this schema provides no confidence interval or human-benefit
+claim. Human profiling and personal ability scores are outside its scope.
+
+Resource evidence requires actual monotonic-clock integer-microsecond samples
+from the local serial scored executions, two samples per selected/held-out task,
+up to 64. Their sum must fit the supplied total wall duration (at most five
+minutes). The encoder/verifier derives sample count and p95 using the nearest
+rank `ceil(0.95*n)-1`; it does not accept a caller's summary unverified. Durations
+can be zero at microsecond clock resolution. Provider cost, provider tokens and
+network calls are explicitly zero for this local synthetic execution contract.
+The adapter must measure within the declared scoring boundary; fixture
+validation, cryptographic issuance and other service overhead are excluded.
+This encoder checks consistency, not whether a caller actually took a timing
+measurement. It must not be exposed as a public caller-controlled signing API.
+
+Signing requires a matching actual Ed25519 private/public key pair, explicit
+current time and a TTL in (0, five minutes]. There is no unsigned or default-key
+mode. Verification requires a nonempty current trusted-key set, exact expected
+bindings and current time; it rejects expired/future evidence, unknown fields,
+invalid quantities, mismatched summaries, malformed JSON values and signature
+or content-ID tampering. Output is deeply frozen. Neither historical signature
+validity nor a caller-supplied trusted set substitutes for current service policy.
+
+A personal service adapter remains responsible for independently reviewed frozen
+fixtures/builds, finite execution permission, real timing collection, dedicated
+key purpose, current key/policy/review revocation and a final synchronous
+authority check after its last asynchronous read. Trial permission and durable
+promotion/rollback remain separate. No CLI/MCP promotion route, runtime setting,
+service endpoint or published package is activated by this addendum.
+
+Tests include real signatures, precision round trips, every expected binding,
+unknown authority fields, key mismatch/revocation/type, expiry, split/quantity
+bounds, immutable snapshots and an actual attempted ADR-322A promotion. Direct
+registration fails; adding a legacy storage locator still cannot pass the old
+verifier or mutate champion, epoch or commits. Existing valid promotion receipt
+verification remains covered by regression tests.
