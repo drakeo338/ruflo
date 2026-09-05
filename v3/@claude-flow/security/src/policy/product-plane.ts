@@ -48,6 +48,10 @@ export const PRODUCT_ACTIONS = [
   'workforce.personal.cancel',
   'workforce.personal.consent',
   'workforce.personal.notify',
+  'workforce.synthetic.trial.activate',
+  'workforce.synthetic.trial.run',
+  'workforce.synthetic.trial.read',
+  'workforce.synthetic.trial.rollback',
 ] as const;
 
 export type ProductAction = (typeof PRODUCT_ACTIONS)[number];
@@ -349,6 +353,10 @@ export const ACTION_AUTHORITIES: Readonly<Record<ProductAction, readonly Product
   'workforce.personal.cancel': ['ruclip'],
   'workforce.personal.consent': ['ruclip'],
   'workforce.personal.notify': ['ruclip'],
+  'workforce.synthetic.trial.activate': ['ruclip'],
+  'workforce.synthetic.trial.run': ['ruclip'],
+  'workforce.synthetic.trial.read': ['ruclip'],
+  'workforce.synthetic.trial.rollback': ['ruclip'],
 };
 
 const NO_SIDE_EFFECT_REQUIREMENTS: ProductActionRequirements = {
@@ -419,6 +427,12 @@ export const PRODUCT_ACTION_REQUIREMENTS: Readonly<Record<ProductAction, Product
   'workforce.personal.cancel': MUTATION_REQUIREMENTS,
   'workforce.personal.consent': { ...MUTATION_REQUIREMENTS, validationReceipt: true },
   'workforce.personal.notify': { ...MUTATION_REQUIREMENTS, validationReceipt: true },
+  'workforce.synthetic.trial.activate': { ...MUTATION_REQUIREMENTS, validationReceipt: true },
+  'workforce.synthetic.trial.run': { ...MUTATION_REQUIREMENTS, validationReceipt: true },
+  // The generic verifier reserves replay identity for every operation, including
+  // status reads. Read/rollback use separate authority, not an enabled run grant.
+  'workforce.synthetic.trial.read': MUTATION_REQUIREMENTS,
+  'workforce.synthetic.trial.rollback': MUTATION_REQUIREMENTS,
   'memory.commit-validated': {
     requestDigest: true,
     contentDigest: true,
@@ -716,6 +730,65 @@ function validatePersonalWorkforceBindings(
   }
 }
 
+/** Fixed fixture profile, deliberately not a human identity or a runtime grant.
+ * A future controller must resolve distinct current trial approval and validate
+ * canonical body/evidence/manifest/epoch/fixture/finite-budget bindings. */
+export const SYNTHETIC_TRIAL_PROFILE = Object.freeze({
+  workspaceId: 'synthetic-workspace',
+  companyId: 'synthetic-company',
+  ownerId: 'synthetic-owner',
+  subjectNamespace: 'workload' as const,
+  subjectId: 'ruclip/synthetic-workspace/synthetic-company/synthetic-owner',
+  tenantNamespace: 'ruclip-company' as const,
+  tenantId: 'synthetic-workspace/synthetic-company',
+  resourcePrefix: 'ruclip://workspaces/synthetic-workspace/companies/synthetic-company/humans/synthetic-owner/synthetic-trials/',
+  maxTtlMs: 5 * 60_000,
+});
+const SYNTHETIC_TRIAL_ACTIONS = new Set<ProductAction>([
+  'workforce.synthetic.trial.activate', 'workforce.synthetic.trial.run',
+  'workforce.synthetic.trial.read', 'workforce.synthetic.trial.rollback',
+]);
+function validateSyntheticTrialBindings(
+  input: Record<string, unknown>, subject: NamespacedIdentity | undefined,
+  actor: NamespacedIdentity | undefined, tenant: NamespacedTenantRef | undefined,
+  resources: string[] | undefined, issues: ValidationIssue[],
+): void {
+  const profile = SYNTHETIC_TRIAL_PROFILE;
+  if (input.issuer !== 'ruclip' || input.audience !== 'ruclip') {
+    issue(issues, '$.issuer', 'invalid_authority', 'synthetic trial ingress requires ruClip issuer and audience');
+  }
+  if (subject?.namespace !== profile.subjectNamespace || subject.id !== profile.subjectId) {
+    issue(issues, '$.subject', 'invalid_format', 'synthetic trial requires the exact fixture workload subject');
+  }
+  if (tenant?.namespace !== profile.tenantNamespace || tenant.id !== profile.tenantId) {
+    issue(issues, '$.tenantRef', 'tenant_mismatch', 'synthetic trial requires the fixed fixture tenant');
+  }
+  // The actor is explicit in this service profile; it cannot impersonate a human.
+  if (!actor || !subject || !sameIdentity(actor, subject)) {
+    issue(issues, '$.actor', 'unsupported_value', 'synthetic trial requires the same explicit workload actor');
+  }
+  const operation = typeof input.action === 'string' ? input.action.slice('workforce.synthetic.trial.'.length) : '';
+  const resource = resources?.[0];
+  const parts = typeof resource === 'string' && resource.startsWith(profile.resourcePrefix)
+    ? resource.slice(profile.resourcePrefix.length).split('/') : [];
+  const valid = typeof parts[0] === 'string' && WORKFLOW_ID_RE.test(parts[0]) && (
+    operation === 'run'
+      ? parts.length === 3 && parts[1] === 'runs' && typeof parts[2] === 'string' && WORKFLOW_ID_RE.test(parts[2])
+      : parts.length === 2 && parts[1] === ({ activate: 'activation', read: 'status', rollback: 'rollback' } as Record<string, string>)[operation]
+  );
+  if (resources?.length !== 1 || !valid) {
+    issue(issues, '$.resourceRefs', 'tenant_mismatch', 'requires one exact synthetic trial action resource');
+  }
+  if (isRecord(input.authoritativeSource)
+    && input.authoritativeSource.sourceType !== `ruclip/synthetic-trial-${operation}`) {
+    issue(issues, '$.authoritativeSource.sourceType', 'unsupported_value', 'source kind must match the synthetic trial action');
+  }
+  if (typeof input.occurredAt === 'string' && typeof input.expiresAt === 'string'
+    && Date.parse(input.expiresAt) - Date.parse(input.occurredAt) > profile.maxTtlMs) {
+    issue(issues, '$.expiresAt', 'unsupported_value', 'synthetic trial envelope lifetime exceeds five minutes');
+  }
+}
+
 export function validateProductActionEnvelope(input: unknown): ValidationResult<ProductActionEnvelopeV1> {
   const issues: ValidationIssue[] = [];
   if (!isRecord(input)) {
@@ -843,6 +916,9 @@ export function validateProductActionEnvelope(input: unknown): ValidationResult<
 
   if (action && PERSONAL_WORKFORCE_ACTIONS.has(action)) {
     validatePersonalWorkforceBindings(input, subject, actor, tenantRef, resourceRefs, issues);
+  }
+  if (action && SYNTHETIC_TRIAL_ACTIONS.has(action)) {
+    validateSyntheticTrialBindings(input, subject, actor, tenantRef, resourceRefs, issues);
   }
 
   const sourceResult = validateAuthoritativeReference(input.authoritativeSource, { action, tenantRef });

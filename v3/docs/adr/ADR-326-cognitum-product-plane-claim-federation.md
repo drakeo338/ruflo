@@ -670,3 +670,74 @@ content access, provider spend, arbitrary channel posts, or a notification pump.
 Pump scheduling requires its own bounded authority. Durable ambiguous-send
 recovery still requires independent evidence; this profile does not promise
 external exactly-once delivery. No runtime activation or publication is implied.
+
+### 2026-09-05 addendum: fixed synthetic trial reference profile
+
+The unchanged `cognitum.action.v1` envelope gains four closed actions:
+`workforce.synthetic.trial.activate`, `.run`, `.read`, and `.rollback`.
+This is a reference-validation implementation candidate, not a trial controller,
+human pilot, deployment or promotion. Unknown actions remain rejected and all
+existing action obligations, including `evolution.promote`, remain unchanged.
+
+Both issuer and audience are `ruclip`; authoritative source owner is also
+`ruclip`. The profile deliberately reuses the existing `workload` identity
+namespace instead of representing a fixture as a Slack user or human consent:
+
+| Binding | Exact value |
+| --- | --- |
+| Subject and required explicit actor | `workload:ruclip/synthetic-workspace/synthetic-company/synthetic-owner` |
+| Tenant | namespace `ruclip-company`, ID `synthetic-workspace/synthetic-company` |
+| Resource prefix | `ruclip://workspaces/synthetic-workspace/companies/synthetic-company/humans/synthetic-owner/synthetic-trials/` |
+| Activate suffix / source kind | `<trialId>/activation` / `ruclip/synthetic-trial-activate` |
+| Run suffix / source kind | `<trialId>/runs/<runId>` / `ruclip/synthetic-trial-run` |
+| Read suffix / source kind | `<trialId>/status` / `ruclip/synthetic-trial-read` |
+| Rollback suffix / source kind | `<trialId>/rollback` / `ruclip/synthetic-trial-rollback` |
+
+There must be exactly one resource; trial/run IDs are 1–128 ASCII alphanumeric,
+underscore or hyphen characters, starting alphanumeric. No wildcards, encoded
+characters, alternate scope, slashes inside IDs, path normalization, queries,
+fragments or trailing whitespace are accepted. `SYNTHETIC_TRIAL_PROFILE` exports
+the immutable canonical constants so consuming adapters can reuse this binding.
+
+All four actions require request digest, policy receipt, capability reference,
+idempotency key and an expiry after occurrence, at most five minutes later. Reads
+also carry a fresh replay identity because the shared verifier reserves every
+operation. Activate/run additionally require `validationReceiptId` pointing to a
+separately reviewed trial approval. It must never resolve merely to an evaluation
+receipt, favorable comparison, task consent, notification grant or memory grant.
+Read/rollback use separate current authority and remain authorizable after the
+execution grant expires or is revoked; requiring that execution grant would
+prevent safe status inspection and reduction.
+
+These checks validate references only. The service/controller must independently
+resolve the current signer, policy and action-scoped capability, and compare the
+canonical actual request with `requestDigest`. It must verify exact synthetic
+scope, trial ID/run ID, baseline and candidate manifests and verifiers, source/
+build closure, original evaluation-evidence digest, reviewed prospective fixture
+allowlist/digest, expected selection epoch, current revocation, finite run count
+(at most five), TTL and zero provider/network/delivery limits. The source version
+and digest must resolve that current independent capability. Neither a signature
+nor a supplied validation-receipt ID establishes those facts. A future human
+pilot requires a separately reviewed identity/consent profile; this fixed fixture
+scope cannot be relabeled to activate it.
+
+The new evaluation-only format retains `trialAuthorized:false`. Its verifier and
+legacy promotion rejection remain intact; this profile neither upgrades evidence
+to an accepted receipt nor changes the ADR-322A champion, ledger or serving epoch.
+The future controller must atomically retain full verified admission/replay and
+domain state/receipt, recheck authority at execution, preserve spent reservations
+after a crash, and fence stale completion on rollback. The portable verifier's
+replay callback alone does not implement durable trial admission.
+
+Vendoring uses the exact committed standalone `product-plane.ts`, its SHA-256,
+source commit/path and the unchanged MIT license. There is no published package
+or dependency-version claim. No copy may hand-edit or independently diverge the
+action vocabulary. ruClip's existing strict personal intake DTO remains closed
+and must reject these actions until a separate controller is actually wired.
+
+Validation: full security package TypeScript build and OAuth export guard pass;
+674 tests across 26 security test files pass with the available Vitest 3.2.6
+runner. The focused product-plane suites pass 113 tests, including 47 new trial
+cases. Strict source/new-test checking with unchecked indexing and standalone
+TypeScript 5.9.3 compilation also pass. Dependencies were copied into the isolated
+worktree; package declarations and unrelated source were not changed.
