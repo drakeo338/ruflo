@@ -567,3 +567,85 @@ Review this ADR when a product changes its authoritative data owner, a new
 identity domain is added, raw RuView data is allowed to leave the edge, a
 production Cog executor is introduced, or the compatibility profile is
 removed.
+
+## 2026-09-05 addendum: Slack/ruClip personal workforce ingress
+
+**Status:** Structural contract implemented in the standalone
+`security/src/policy/product-plane.ts` module; service adapters and operational
+release evidence remain separate work. This addendum does not promote the
+cross-repository ADR to implemented or alter ADR-328 learning authority.
+
+Slack and ruClip use `ProductActionEnvelopeV1` (`cognitum.action.v1`), its
+canonical encoding, signature verifier, and existing replay-store contract.
+There is no second workforce envelope format. Additive authority values
+`slack` and `ruclip`, identity namespace `slack-user`, and tenant namespace
+`ruclip-company` preserve existing namespace meanings. Reusing `workload` or
+`legacy-principal` for a Slack human would lose the verifiable workspace/user
+boundary; reusing `cognitum-tenant` would falsely imply an existing tenant link.
+Existing valid envelopes retain their previous validation behavior; unlisted
+namespace, authority, action, and field values still fail closed.
+
+The exact new ingress actions are:
+
+| Action | Resource suffix | Required bindings |
+|---|---|---|
+| `workforce.personal.request` | `workflows/<work-id>` | request digest, idempotency key, expiry, policy receipt, capability |
+| `workforce.personal.read` | `workflows` or `workflows/<work-id>` | request digest, idempotency key, expiry, policy receipt, capability |
+| `workforce.personal.cancel` | `workflows/<work-id>` | request digest, idempotency key, expiry, policy receipt, capability |
+| `workforce.personal.consent` | `consent` | request digest, idempotency key, expiry, policy receipt, capability, validation receipt |
+
+Each action requires issuer `slack`, audience `ruclip`, and authoritative source
+`ruclip`. The source kind is `ruclip/personal-workflow`, or
+`ruclip/personal-consent` for consent. The subject is
+`{namespace: 'slack-user', id: '<workspace-id>/<user-id>'}` and tenant is
+`{namespace: 'ruclip-company', id: '<workspace-id>/<company-id>'}`. Workspace IDs
+match `T[A-Z0-9]+`, user IDs `[UW][A-Z0-9]+`, and company/work IDs
+`[A-Za-z0-9][A-Za-z0-9_-]{0,127}`. Subject and tenant workspace must match. An
+optional actor must equal the subject: these actions provide no delegated
+human impersonation. The source tenant must equal the envelope tenant.
+
+Exactly one resource is allowed, with this canonical prefix and an action
+suffix from the table:
+
+```text
+ruclip://workspaces/<workspace-id>/companies/<company-id>/humans/<user-id>/
+```
+
+Encoded separators, dot segments, query/fragment additions, extra path
+segments, and resources owned by another workspace/company/human are rejected.
+The expiry must follow occurrence by at most five minutes. Read actions also
+supply idempotency keys because the existing ingress verifier consumes a replay
+reservation; each independently authorized read uses a fresh operation key.
+Content digest is optional for these actions because requestDigest binds the
+exact operation. This does not replace ADR-328 content-bound memory commits.
+
+### Required service adapter checks
+
+Structural validity, a signature, or a caller-supplied receipt ID never grants
+permission. The Slack adapter must derive workspace and user from the verified
+Slack request/session, never from email, role, display text, or caller claims.
+The ruClip adapter must re-resolve active membership, company/workspace mapping,
+resource ownership, current policy and grant revision, revocation/fencing state,
+and limits at ingress and again at consequential execution/delivery boundaries.
+The receiver compares requestDigest with the canonical actual request, resolves
+the authoritative source version/digest, and verifies the capability binds the
+issuer, audience, exact action, subject, tenant, resource, request and expiry.
+A request capability never grants cancellation or consent, nor hiring, deployment,
+policy promotion, arbitrary agent execution, or another person's access.
+
+For consent, validationReceiptId resolves a verified human decision matching the
+exact proposed grant revision and request digest. A standing execution grant is
+not proof of a new decision. The self-consent capability authorizes only the
+owner's bounded settings change and remains issuable for first enablement,
+pause or revocation without requiring a prior enabled workflow grant. Local
+identity, membership and policy checks still apply; adapters must not deadlock
+consent by requiring the workload permission being changed.
+
+The verifier's policyVerifier and capabilityVerifier callbacks must perform
+these current checks; production adapters must not use constant-allow callbacks.
+They must persist replay/idempotency and domain admission together or reconcile
+a crash between them. The portable reference validator alone does not provide
+transactional execution, durable replay storage, receipt resolution, identity
+proof, or service availability. Vendoring this dependency-free module requires
+its exact source commit and content hash; it does not imply a published package,
+configured service, deployment, or release authorization.

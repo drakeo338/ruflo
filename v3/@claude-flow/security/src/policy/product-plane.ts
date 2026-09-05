@@ -43,6 +43,10 @@ export const PRODUCT_ACTIONS = [
   'memory.propose',
   'evidence.read',
   'memory.commit-validated',
+  'workforce.personal.request',
+  'workforce.personal.read',
+  'workforce.personal.cancel',
+  'workforce.personal.consent',
 ] as const;
 
 export type ProductAction = (typeof PRODUCT_ACTIONS)[number];
@@ -56,6 +60,8 @@ export const PRODUCT_AUTHORITIES = [
   'ruview.edge',
   'ruflo.policy',
   'ruflo.memory',
+  'slack',
+  'ruclip',
 ] as const;
 
 export type ProductAuthority = (typeof PRODUCT_AUTHORITIES)[number];
@@ -68,6 +74,7 @@ export const IDENTITY_NAMESPACES = [
   'workload',
   'ruflo-agent',
   'legacy-principal',
+  'slack-user',
 ] as const;
 
 export type IdentityNamespace = (typeof IDENTITY_NAMESPACES)[number];
@@ -79,6 +86,7 @@ export const TENANT_NAMESPACES = [
   'comms-tenant',
   'agentbbs-board',
   'ruview-space',
+  'ruclip-company',
 ] as const;
 
 export type TenantNamespace = (typeof TENANT_NAMESPACES)[number];
@@ -335,6 +343,10 @@ export const ACTION_AUTHORITIES: Readonly<Record<ProductAction, readonly Product
   'memory.propose': ['ruflo.memory'],
   'evidence.read': ['ruflo.memory'],
   'memory.commit-validated': ['ruflo.memory'],
+  'workforce.personal.request': ['ruclip'],
+  'workforce.personal.read': ['ruclip'],
+  'workforce.personal.cancel': ['ruclip'],
+  'workforce.personal.consent': ['ruclip'],
 };
 
 const NO_SIDE_EFFECT_REQUIREMENTS: ProductActionRequirements = {
@@ -399,6 +411,11 @@ export const PRODUCT_ACTION_REQUIREMENTS: Readonly<Record<ProductAction, Product
   'memory.recall': SCOPED_READ_REQUIREMENTS,
   'memory.propose': MUTATION_REQUIREMENTS,
   'evidence.read': SCOPED_READ_REQUIREMENTS,
+  'workforce.personal.request': MUTATION_REQUIREMENTS,
+  // Reads also consume a replay reservation: each read has a distinct operation key.
+  'workforce.personal.read': MUTATION_REQUIREMENTS,
+  'workforce.personal.cancel': MUTATION_REQUIREMENTS,
+  'workforce.personal.consent': { ...MUTATION_REQUIREMENTS, validationReceipt: true },
   'memory.commit-validated': {
     requestDigest: true,
     contentDigest: true,
@@ -627,6 +644,70 @@ export function validateAuthoritativeReference(
   };
 }
 
+/** Slack ingress profile; these structural checks never establish a local grant. */
+const PERSONAL_WORKFORCE_ACTIONS = new Set<ProductAction>([
+  'workforce.personal.request', 'workforce.personal.read',
+  'workforce.personal.cancel', 'workforce.personal.consent',
+]);
+export const PERSONAL_WORKFORCE_MAX_TTL_MS = 5 * 60_000;
+const SLACK_HUMAN_REF_RE = /^(T[A-Z0-9]+)\/([UW][A-Z0-9]+)(?![\s\S])/;
+const RUCLIP_COMPANY_REF_RE = /^(T[A-Z0-9]+)\/([A-Za-z0-9][A-Za-z0-9_-]{0,127})(?![\s\S])/;
+// Absolute end assertions also reject final Unicode line separators (unlike $).
+const WORKFLOW_ID_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{0,127}(?![\s\S])/;
+
+function validatePersonalWorkforceBindings(
+  input: Record<string, unknown>,
+  subject: NamespacedIdentity | undefined,
+  actor: NamespacedIdentity | undefined,
+  tenant: NamespacedTenantRef | undefined,
+  resources: string[] | undefined,
+  issues: ValidationIssue[],
+): void {
+  if (input.issuer !== 'slack') {
+    issue(issues, '$.issuer', 'invalid_authority', 'personal workforce ingress requires the Slack authority');
+  }
+  if (input.audience !== 'ruclip') {
+    issue(issues, '$.audience', 'invalid_authority', 'personal workforce ingress targets ruClip');
+  }
+  const human = subject?.namespace === 'slack-user' ? SLACK_HUMAN_REF_RE.exec(subject.id) : null;
+  const company = tenant?.namespace === 'ruclip-company' ? RUCLIP_COMPANY_REF_RE.exec(tenant.id) : null;
+  if (!human) {
+    issue(issues, '$.subject', 'invalid_format', 'requires slack-user with canonical workspace/user ID');
+  }
+  if (!company) {
+    issue(issues, '$.tenantRef', 'invalid_format', 'requires ruclip-company with canonical workspace/company ID');
+  }
+  if (human && company && human[1] !== company[1]) {
+    issue(issues, '$.subject', 'tenant_mismatch', 'human workspace differs from company workspace');
+  }
+  // This profile permits only self-service; delegation requires a separate profile.
+  if (actor && (!subject || !sameIdentity(actor, subject))) {
+    issue(issues, '$.actor', 'unsupported_value', 'personal workforce actor must equal the human subject');
+  }
+  if (human && company && resources) {
+    const prefix = `ruclip://workspaces/${company[1]}/companies/${company[2]}/humans/${human[2]}/`;
+    const resource = resources[0];
+    const suffix = resource?.startsWith(prefix) ? resource.slice(prefix.length) : undefined;
+    const consent = input.action === 'workforce.personal.consent';
+    const valid = consent ? suffix === 'consent' : (
+      (input.action === 'workforce.personal.read' && suffix === 'workflows')
+      || (suffix?.startsWith('workflows/') && WORKFLOW_ID_RE.test(suffix.slice('workflows/'.length)))
+    );
+    if (resources.length !== 1 || !valid) {
+      issue(issues, '$.resourceRefs', 'tenant_mismatch', 'requires one canonical workspace/company/human action resource');
+    }
+  }
+  const sourceType = input.action === 'workforce.personal.consent'
+    ? 'ruclip/personal-consent' : 'ruclip/personal-workflow';
+  if (isRecord(input.authoritativeSource) && input.authoritativeSource.sourceType !== sourceType) {
+    issue(issues, '$.authoritativeSource.sourceType', 'unsupported_value', 'source kind must match the personal action');
+  }
+  if (typeof input.occurredAt === 'string' && typeof input.expiresAt === 'string'
+    && Date.parse(input.expiresAt) - Date.parse(input.occurredAt) > PERSONAL_WORKFORCE_MAX_TTL_MS) {
+    issue(issues, '$.expiresAt', 'unsupported_value', 'personal workforce envelope lifetime exceeds five minutes');
+  }
+}
+
 export function validateProductActionEnvelope(input: unknown): ValidationResult<ProductActionEnvelopeV1> {
   const issues: ValidationIssue[] = [];
   if (!isRecord(input)) {
@@ -741,15 +822,19 @@ export function validateProductActionEnvelope(input: unknown): ValidationResult<
     const requirements = PRODUCT_ACTION_REQUIREMENTS[action];
     const required: Array<[boolean, string, string]> = [
       [requirements.requestDigest, 'requestDigest', 'action requires a request digest'],
-      [requirements.contentDigest, 'contentDigest', 'validated memory commit requires a content digest'],
+      [requirements.contentDigest, 'contentDigest', 'action requires a content digest'],
       [requirements.idempotencyKey, 'idempotencyKey', 'action requires an idempotency key'],
       [requirements.expiry, 'expiresAt', 'action requires a bounded expiry'],
       [requirements.capability, 'capabilityId', 'action requires a narrow capability'],
-      [requirements.validationReceipt, 'validationReceiptId', 'validated memory commit requires a validation receipt'],
+      [requirements.validationReceipt, 'validationReceiptId', 'action requires a validation receipt'],
     ];
     for (const [isRequired, field, message] of required) {
       if (isRequired && input[field] === undefined) issue(issues, `$.${field}`, 'missing', message);
     }
+  }
+
+  if (action && PERSONAL_WORKFORCE_ACTIONS.has(action)) {
+    validatePersonalWorkforceBindings(input, subject, actor, tenantRef, resourceRefs, issues);
   }
 
   const sourceResult = validateAuthoritativeReference(input.authoritativeSource, { action, tenantRef });
