@@ -48,6 +48,7 @@ export const PRODUCT_ACTIONS = [
   'workforce.personal.cancel',
   'workforce.personal.consent',
   'workforce.personal.notify',
+  'workforce.business.briefing.read',
   'workforce.synthetic.trial.activate',
   'workforce.synthetic.trial.run',
   'workforce.synthetic.trial.read',
@@ -353,6 +354,7 @@ export const ACTION_AUTHORITIES: Readonly<Record<ProductAction, readonly Product
   'workforce.personal.cancel': ['ruclip'],
   'workforce.personal.consent': ['ruclip'],
   'workforce.personal.notify': ['ruclip'],
+  'workforce.business.briefing.read': ['ruclip'],
   'workforce.synthetic.trial.activate': ['ruclip'],
   'workforce.synthetic.trial.run': ['ruclip'],
   'workforce.synthetic.trial.read': ['ruclip'],
@@ -427,6 +429,8 @@ export const PRODUCT_ACTION_REQUIREMENTS: Readonly<Record<ProductAction, Product
   'workforce.personal.cancel': MUTATION_REQUIREMENTS,
   'workforce.personal.consent': { ...MUTATION_REQUIREMENTS, validationReceipt: true },
   'workforce.personal.notify': { ...MUTATION_REQUIREMENTS, validationReceipt: true },
+  // Read-only source access still consumes an explicit replay reservation.
+  'workforce.business.briefing.read': MUTATION_REQUIREMENTS,
   'workforce.synthetic.trial.activate': { ...MUTATION_REQUIREMENTS, validationReceipt: true },
   'workforce.synthetic.trial.run': { ...MUTATION_REQUIREMENTS, validationReceipt: true },
   // The generic verifier reserves replay identity for every operation, including
@@ -730,6 +734,53 @@ function validatePersonalWorkforceBindings(
   }
 }
 
+/** Reference profile only: source access requires an independent current
+ * business-source permission, never a role label or personal workload consent. */
+export const BUSINESS_BRIEFING_PROFILE = Object.freeze({
+  action: 'workforce.business.briefing.read' as const,
+  sourceType: 'ruclip/business-briefing',
+  resourceSegment: 'business-briefings',
+  privacyClass: 'P1' as const,
+  maxTtlMs: 5 * 60_000,
+});
+function validateBusinessBriefingBindings(
+  input: Record<string, unknown>, subject: NamespacedIdentity | undefined,
+  actor: NamespacedIdentity | undefined, tenant: NamespacedTenantRef | undefined,
+  resources: string[] | undefined, issues: ValidationIssue[],
+): void {
+  const profile = BUSINESS_BRIEFING_PROFILE;
+  if (input.issuer !== 'slack' || input.audience !== 'ruclip') {
+    issue(issues, '$.issuer', 'invalid_authority', 'business briefing ingress requires Slack issuer and ruClip audience');
+  }
+  const human = subject?.namespace === 'slack-user' ? SLACK_HUMAN_REF_RE.exec(subject.id) : null;
+  const company = tenant?.namespace === 'ruclip-company' ? RUCLIP_COMPANY_REF_RE.exec(tenant.id) : null;
+  if (!human) issue(issues, '$.subject', 'invalid_format', 'requires canonical workspace/Slack human ID');
+  if (!company) issue(issues, '$.tenantRef', 'invalid_format', 'requires canonical workspace/company ID');
+  if (human && company && human[1] !== company[1]) {
+    issue(issues, '$.subject', 'tenant_mismatch', 'human workspace differs from company workspace');
+  }
+  if (!actor || !subject || !sameIdentity(actor, subject)) {
+    issue(issues, '$.actor', 'unsupported_value', 'business briefing requires the same explicit human actor');
+  }
+  const prefix = human && company
+    ? `ruclip://workspaces/${company[1]}/companies/${company[2]}/humans/${human[2]}/${profile.resourceSegment}/` : undefined;
+  const resource = resources?.[0];
+  const profileId = prefix && resource?.startsWith(prefix) ? resource.slice(prefix.length) : undefined;
+  if (resources?.length !== 1 || profileId === undefined || !WORKFLOW_ID_RE.test(profileId)) {
+    issue(issues, '$.resourceRefs', 'tenant_mismatch', 'requires one exact workspace/company/human business profile resource');
+  }
+  if (isRecord(input.authoritativeSource) && input.authoritativeSource.sourceType !== profile.sourceType) {
+    issue(issues, '$.authoritativeSource.sourceType', 'unsupported_value', 'source kind must match business briefing read');
+  }
+  if (input.privacyClass !== profile.privacyClass) {
+    issue(issues, '$.privacyClass', 'privacy_ceiling_exceeded', 'business briefing requires private readable P1 content');
+  }
+  if (typeof input.occurredAt === 'string' && typeof input.expiresAt === 'string'
+    && Date.parse(input.expiresAt) - Date.parse(input.occurredAt) > profile.maxTtlMs) {
+    issue(issues, '$.expiresAt', 'unsupported_value', 'business briefing envelope lifetime exceeds five minutes');
+  }
+}
+
 /** Fixed fixture profile, deliberately not a human identity or a runtime grant.
  * A future controller must resolve distinct current trial approval and validate
  * canonical body/evidence/manifest/epoch/fixture/finite-budget bindings. */
@@ -919,6 +970,9 @@ export function validateProductActionEnvelope(input: unknown): ValidationResult<
   }
   if (action && SYNTHETIC_TRIAL_ACTIONS.has(action)) {
     validateSyntheticTrialBindings(input, subject, actor, tenantRef, resourceRefs, issues);
+  }
+  if (action === BUSINESS_BRIEFING_PROFILE.action) {
+    validateBusinessBriefingBindings(input, subject, actor, tenantRef, resourceRefs, issues);
   }
 
   const sourceResult = validateAuthoritativeReference(input.authoritativeSource, { action, tenantRef });

@@ -741,3 +741,73 @@ runner. The focused product-plane suites pass 113 tests, including 47 new trial
 cases. Strict source/new-test checking with unchecked indexing and standalone
 TypeScript 5.9.3 compilation also pass. Dependencies were copied into the isolated
 worktree; package declarations and unrelated source were not changed.
+
+### 2026-09-05 addendum: private business briefing read reference profile
+
+The unchanged `cognitum.action.v1` envelope adds exactly
+`workforce.business.briefing.read`. This is a read-only reference contract for an
+on-demand private briefing. It does not authorize scheduling, delivery, consent,
+source mutation, approval decisions, spending, memory updates or promotion.
+Existing personal and synthetic actions and `evolution.promote` keep their prior
+requirements. No runtime activation or published package is implied.
+
+The issuer is `slack`; audience and authoritative source authority are `ruclip`.
+The subject and required explicit actor must be the same `slack-user` with the
+canonical ID `<workspaceId>/<SlackUserId>`. The tenant namespace is
+`ruclip-company` with ID `<workspaceId>/<companyId>` and the same workspace.
+Exactly one resource is permitted:
+
+```text
+ruclip://workspaces/<workspaceId>/companies/<companyId>/humans/<SlackUserId>/business-briefings/<profileId>
+```
+
+Workspace/user/company grammar reuses the existing personal profile. The profile
+ID is 1–128 ASCII alphanumeric, underscore or hyphen characters, starting with an
+alphanumeric character. Encodings, wildcards, path normalization, extra segments,
+queries, fragments and trailing whitespace cannot designate an alternate scope.
+The resource uses the verified Slack user, not a caller-selected canonical member
+ID; the service must freshly resolve that human to the configured active member.
+`BUSINESS_BRIEFING_PROFILE` exports the immutable action/source/resource/privacy/
+TTL constants for adapters. Source kind is exactly `ruclip/business-briefing`.
+
+The envelope requires `P1` private readable content, canonical actual request
+digest, policy receipt, action capability, explicit idempotency key and expiry
+after occurrence no more than five minutes later. The service can impose a
+shorter deadline. Readability does not authorize arbitrary source classes: those
+are fixed by the independently reviewed private profile and source grant. A
+supplied source digest or capability label establishes no permission. The
+adapter must resolve source ID/version/digest to the exact current business-read
+capability, bind the profile epoch and independently reviewed business-source
+grant, and compare the canonical request digest. An email, role, reporting-tree
+position, unsigned legacy executive record, own-issues consent, evaluation
+receipt or notification grant cannot substitute for this independent authority.
+The portable validator does not inspect or mint that domain permission.
+
+The generic verifier reserves replay identity for reads too. Its atomic callback
+must distinguish a first reservation, exact replay and a conflicting digest;
+returning `reserved` for existing records is not a conforming adapter. A minimal
+synchronous read may deny replay and require a fresh signed request after a lost
+response. That does not promise durable job execution or exact response recovery.
+Any stronger recovery contract needs a separately implemented bounded durable
+admission/result lifecycle; the current personal own-issues DTO is not implicitly
+extended by this action.
+
+Before fetching and before returning readable content, the adapter must recheck
+the active canonical owner, exact workspace/company binding, current signing key,
+policy, profile epoch, source grant and expiry. After the last awaited owner/source
+read, a final synchronous current authority check is required; a prior successful
+verification cannot survive revocation during I/O. Allowed fixed source classes,
+reporting-window and record bounds, response coverage, source provenance and exact
+artifact verification remain service responsibilities. The on-demand action does
+not create a daily profile or imply that any founder permission is configured.
+
+Vendoring retains the existing exact committed standalone source, source SHA-256,
+source path/commit and MIT license process. Consumers must not hand-edit an
+independent action vocabulary. No change to the deployed protected bridge is
+required or authorized by this source-contract extension.
+
+Validation: security package build and OAuth export guard pass; 716 tests across
+27 files pass, including 42 new business-profile cases. Strict source/new-test
+checking with unchecked indexing and standalone declaration compilation pass on
+TypeScript 5.9.3. The available copied test runner is Vitest 3.2.6 (the package
+declares ^4.1.0); no dependency declarations or unrelated source were changed.
