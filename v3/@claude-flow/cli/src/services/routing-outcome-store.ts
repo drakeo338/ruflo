@@ -1,11 +1,13 @@
 /**
  * Routing outcome store: the persistence half of ruflo's routing learning loop.
  *
- * Writers: `hooks_post-task` (MCP/CLI, explicit success or failure) and the
- * `post-agent` Claude Code hook in `.claude/helpers/hook-handler.cjs` (every
- * Agent/Task call, recorded as `unknown` unless the tool reported an error).
- * Reader: `hooks_route`, plus `learned-patterns.json`, which this module
- * compiles for the prompt-time hook router.
+ * Two files, deliberately separate:
+ * - `routing-outcomes.json`: labelled outcomes written by `hooks_post-task`
+ *   (MCP/CLI, explicit success or failure). The learner reads only this, and
+ *   compiles `learned-patterns.json` for the prompt-time hook router.
+ * - `routing-observations.jsonl`: an append-only line per Agent/Task call from
+ *   the `post-agent` hook in `.claude/helpers/hook-handler.cjs`, `unknown`
+ *   unless the tool reported an error. High volume, never used as a label.
  *
  * Two invariants:
  * - Paths resolve from the project directory, never the process cwd. The MCP
@@ -91,6 +93,41 @@ export function routingOutcomesPath(projectDir: string = getProjectCwd()): strin
 
 export function learnedPatternsPath(projectDir: string = getProjectCwd()): string {
   return join(projectDir, '.claude-flow', 'learned-patterns.json');
+}
+
+/**
+ * Append-only log the `post-agent` hook writes, one line per Agent/Task call.
+ * Kept apart from the labelled store so a high-volume stream of `unknown`
+ * rows can never evict the rare labelled outcomes the learner depends on.
+ */
+export function routingObservationsPath(projectDir: string = getProjectCwd()): string {
+  return join(projectDir, '.claude-flow', 'routing-observations.jsonl');
+}
+
+export interface RoutingObservation {
+  agent: string;
+  promptHash: string;
+  keywords: string[];
+  outcome: 'failure' | 'unknown';
+  signal: string;
+  background: boolean;
+  source: 'hook';
+  timestamp: string;
+}
+
+/** Read the observation log, skipping malformed lines. Bounded like the store. */
+export function loadRoutingObservations(file: string = routingObservationsPath()): RoutingObservation[] {
+  try {
+    if (!existsSync(file) || statSync(file).size > MAX_STORE_BYTES) return [];
+    return readFileSync(file, 'utf-8')
+      .split('\n')
+      .flatMap((line) => {
+        if (!line.trim()) return [];
+        try { return [JSON.parse(line) as RoutingObservation]; } catch { return []; }
+      });
+  } catch {
+    return [];
+  }
 }
 
 export function loadRoutingOutcomes(file: string = routingOutcomesPath()): RoutingOutcomeRow[] {

@@ -30,7 +30,9 @@ afterEach(() => {
   rmSync(project, { recursive: true, force: true });
 });
 
-const store = () => join(project, '.claude-flow', 'routing-outcomes.json');
+const store = () => join(project, '.claude-flow', 'routing-observations.jsonl');
+const labelled = () => join(project, '.claude-flow', 'routing-outcomes.json');
+const lines = () => readFileSync(store(), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l));
 const agentCall = (over: Record<string, unknown> = {}) => ({
   hook_event_name: 'PostToolUse',
   tool_name: 'Agent',
@@ -53,11 +55,28 @@ describe('tokenizer parity with the TypeScript store', () => {
 describe('post-agent capture', () => {
   it('records agent, keywords and a prompt hash, never the prompt text', () => {
     const row = handler.recordAgentOutcome(agentCall());
-    expect(row).toMatchObject({ agent: 'security-auditor', outcome: 'unknown', success: false, source: 'hook' });
+    expect(row).toMatchObject({ agent: 'security-auditor', outcome: 'unknown', source: 'hook', background: false });
     const raw = readFileSync(store(), 'utf8');
     expect(raw).not.toContain('sk-live-123');
     expect(raw).not.toContain('Audit the auth module');
-    expect(JSON.parse(raw).outcomes[0].keywords).toContain('injection');
+    expect(lines()[0].keywords).toContain('injection');
+  });
+
+  it('never writes the labelled store, so observations cannot evict labels', () => {
+    mkdirSync(join(project, '.claude-flow'), { recursive: true });
+    writeFileSync(labelled(), '{"outcomes":[{"agent":"coder","success":true}]}');
+    for (let i = 0; i < 5; i++) handler.recordAgentOutcome(agentCall());
+    expect(readFileSync(labelled(), 'utf8')).toBe('{"outcomes":[{"agent":"coder","success":true}]}');
+    expect(lines()).toHaveLength(5);
+  });
+
+  it('defaults a missing subagent_type to general-purpose (the Agent tool default)', () => {
+    expect(handler.recordAgentOutcome(agentCall({ tool_input: { prompt: 'summarise the design doc' } })).agent).toBe('general-purpose');
+  });
+
+  it('flags background spawns, whose PostToolUse fires before the agent finishes', () => {
+    const row = handler.recordAgentOutcome(agentCall({ tool_input: { subagent_type: 'coder', prompt: 'refactor parser', run_in_background: true } }));
+    expect(row.background).toBe(true);
   });
 
   it('does not read an error mentioned in prose as a failure', () => {
@@ -69,8 +88,7 @@ describe('post-agent capture', () => {
     expect(row).toMatchObject({ outcome: 'failure', signal: 'tool_error' });
   });
 
-  it('rejects missing or malformed agent names and empty prompts', () => {
-    expect(handler.recordAgentOutcome(agentCall({ tool_input: { prompt: 'x y z' } }))).toBeNull();
+  it('rejects malformed agent names and empty prompts', () => {
     expect(handler.recordAgentOutcome(agentCall({ tool_input: { subagent_type: '../evil', prompt: 'hi there' } }))).toBeNull();
     expect(handler.recordAgentOutcome(agentCall({ tool_input: { subagent_type: 'coder', prompt: '   ' } }))).toBeNull();
     expect(existsSync(store())).toBe(false);
@@ -81,11 +99,23 @@ describe('post-agent capture', () => {
     expect(row.agent).toBe('ruflo-core:reviewer');
   });
 
-  it('skips rather than overwrites a store it cannot parse', () => {
+  it('rotates the log once it passes the size cap, keeping one old generation', () => {
     mkdirSync(join(project, '.claude-flow'), { recursive: true });
-    writeFileSync(store(), '{corrupt');
-    expect(handler.recordAgentOutcome(agentCall())).toBeNull();
-    expect(readFileSync(store(), 'utf8')).toBe('{corrupt');
+    writeFileSync(store(), 'x'.repeat(5 * 1024 * 1024 + 1));
+    handler.recordAgentOutcome(agentCall());
+    expect(existsSync(`${store()}.1`)).toBe(true);
+    expect(lines()).toHaveLength(1);
+  });
+
+  it('keeps every row when many agents finish at once', async () => {
+    const { spawn } = await import('node:child_process');
+    const runs = Array.from({ length: 20 }, (_, i) => new Promise<void>((done) => {
+      const child = spawn(process.execPath, [handlerPath, 'post-agent'], { env: { ...process.env, CLAUDE_PROJECT_DIR: project } });
+      child.on('close', () => done());
+      child.stdin.end(JSON.stringify(agentCall({ tool_input: { subagent_type: 'tester', prompt: `write tests batch ${i}` } })));
+    }));
+    await Promise.all(runs);
+    expect(lines()).toHaveLength(20);
   });
 
   it('runs end to end as the PostToolUse hook and exits 0', () => {
@@ -94,7 +124,7 @@ describe('post-agent capture', () => {
     });
     expect(res.status).toBe(0);
     expect(res.stdout).toContain('[LEARN] Agent outcome recorded (security-auditor: unknown)');
-    expect(JSON.parse(readFileSync(store(), 'utf8')).outcomes).toHaveLength(1);
+    expect(lines()).toHaveLength(1);
   });
 
   it('ignores non-agent tools', () => {
@@ -172,10 +202,15 @@ describe('init wiring', () => {
     expect(agentHook?.hooks[0]?.command).toMatch(/hook-handler\.cjs.*post-agent/);
   });
 
-  it('the generator fallback handler loads helpers the same way (ESM-safe)', async () => {
+  it('the generator fallback handler loads helpers the same way (ESM-safe) and parses', async () => {
     const { generateHookHandler } = await import('../src/init/helpers-generator.js');
     const src = generateHookHandler();
     expect(src).toContain('function loadCommonJs(modulePath)');
     expect(src).toContain(".cjs'");
+    // The fallback is a hand-edited string array; a quoting slip would ship a
+    // syntax error to every fallback install.
+    const file = join(project, 'generated-hook-handler.cjs');
+    writeFileSync(file, src);
+    expect(spawnSync(process.execPath, ['--check', file], { encoding: 'utf8' }).status).toBe(0);
   });
 });

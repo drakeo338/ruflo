@@ -267,13 +267,13 @@ const memory = safeRequire(path.join(helpersDir, 'memory.js'));
 const intelligence = safeRequire(path.join(helpersDir, 'intelligence.cjs'));
 
 // ── Routing learning loop ──────────────────────────────────────────────
-// post-agent records every Agent/Task call to .claude-flow/routing-outcomes.json
-// (the same store hooks_post-task writes, services/routing-outcome-store.ts).
-// Only keywords and a prompt hash are stored, never prompt text. A completed
-// call is `unknown`, not a success: only an explicit outcome (hooks_post-task)
-// can label a success. The TS side compiles learned-patterns.json from the
-// labelled rows; route reads it (behind CLAUDE_FLOW_ROUTER_LEARNED) only when
-// the keyword router had no match. Keep ROUTING_STOPWORDS and
+// post-agent appends every Agent/Task call to .claude-flow/routing-observations.jsonl
+// (see services/routing-outcome-store.ts). Only keywords and a prompt hash are
+// stored, never prompt text. A completed call is `unknown`, not a success:
+// only an explicit outcome (hooks_post-task, routing-outcomes.json) labels a
+// success. The TS side compiles learned-patterns.json from the labelled rows;
+// route reads it (behind CLAUDE_FLOW_ROUTER_LEARNED) only when the keyword
+// router had no match. Keep ROUTING_STOPWORDS and
 // extractRoutingKeywords identical to routing-outcome-store.ts (parity test).
 const ROUTING_STOPWORDS = new Set([
   'the','a','an','is','are','was','were','be','been','being','have','has','had',
@@ -285,7 +285,6 @@ const ROUTING_STOPWORDS = new Set([
   'very','just','also','only','both','each','all','any','few','more','most','other',
   'some','such','same','new','now','here','there','where','how','what','which','who',
 ]);
-const MAX_ROUTING_OUTCOMES = 500;
 const MAX_ROUTING_STORE_BYTES = 5 * 1024 * 1024;
 const AGENT_NAME_RE = /^[A-Za-z0-9][A-Za-z0-9:._-]{0,79}$/;
 
@@ -324,9 +323,17 @@ function agentCallFailed(hi) {
   return !!(tr && typeof tr === 'object' && (tr.is_error === true || tr.isError === true));
 }
 
+// Observations go to their own append-only JSONL file, NOT routing-outcomes.json.
+// That store holds the rare labelled outcomes the learner uses; sharing its
+// 500-row cap with a row per agent call would evict every label within days,
+// and a read-modify-write there loses rows when parallel agents finish at once.
+// One appendFileSync of a short line is atomic enough for concurrent hooks.
 function recordAgentOutcome(hi) {
   const ti = (hi && (hi.tool_input || hi.toolInput)) || {};
-  const agent = typeof ti.subagent_type === 'string' ? ti.subagent_type.trim() : '';
+  // subagent_type is optional on the Agent tool; omitting it runs general-purpose.
+  const agent = typeof ti.subagent_type === 'string' && ti.subagent_type.trim()
+    ? ti.subagent_type.trim()
+    : 'general-purpose';
   const text = typeof ti.prompt === 'string' ? ti.prompt
     : (typeof ti.description === 'string' ? ti.description : '');
   if (!AGENT_NAME_RE.test(agent) || !text.trim()) return null;
@@ -335,33 +342,20 @@ function recordAgentOutcome(hi) {
     agent,
     promptHash: 'sha256:' + require('crypto').createHash('sha256').update(text, 'utf8').digest('hex').slice(0, 16),
     keywords: storableRoutingKeywords(text),
-    success: false,
     outcome: failed ? 'failure' : 'unknown',
     signal: failed ? 'tool_error' : 'none',
-    quality: 0,
+    // A background agent's PostToolUse fires at spawn, so its result is unknown here.
+    background: ti.run_in_background === true,
     source: 'hook',
     timestamp: new Date().toISOString(),
   };
-  const file = path.join(projectRoot(hi), '.claude-flow', 'routing-outcomes.json');
-  let outcomes = [];
-  if (fs.existsSync(file)) {
-    // Never clobber a store we cannot read; skip rather than lose history.
-    if (fs.statSync(file).size > MAX_ROUTING_STORE_BYTES) return null;
-    try {
-      const data = JSON.parse(fs.readFileSync(file, 'utf8'));
-      if (Array.isArray(data.outcomes)) outcomes = data.outcomes;
-    } catch (e) { return null; }
-  }
-  outcomes.push(row);
+  const file = path.join(projectRoot(hi), '.claude-flow', 'routing-observations.jsonl');
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  const tmp = `${file}.${process.pid}.${Date.now()}.tmp`;
   try {
-    fs.writeFileSync(tmp, JSON.stringify({ outcomes: outcomes.slice(-MAX_ROUTING_OUTCOMES) }, null, 2));
-    fs.renameSync(tmp, file);
-  } catch (e) {
-    try { fs.unlinkSync(tmp); } catch (_) { /* nothing to clean */ }
-    throw e;
-  }
+    // Keep one rotated generation so the file stays bounded.
+    if (fs.statSync(file).size > MAX_ROUTING_STORE_BYTES) fs.renameSync(file, `${file}.1`);
+  } catch (e) { /* no file yet */ }
+  fs.appendFileSync(file, JSON.stringify(row) + '\n');
   return row;
 }
 
