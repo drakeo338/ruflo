@@ -13,10 +13,10 @@ const jwksFor = (uri) => {
   return cachedJwks;
 };
 
-export function protectedResourceMetadata({ resource, issuer }) {
+export function protectedResourceMetadata({ resource, issuer, legacyIssuer }) {
   return {
     resource,
-    authorization_servers: [issuer],
+    authorization_servers: legacyIssuer ? [issuer, legacyIssuer] : [issuer],
     scopes_supported: Object.values(SCOPES),
     bearer_methods_supported: ['header'],
     resource_documentation: resource.replace(/\/mcp$/, '/'),
@@ -55,26 +55,32 @@ export async function authenticate(req, config, verify = jwtVerify) {
   const parsed = tokenFrom(req);
   if (parsed.error) return { mode: 'denied', error: 'invalid_request', description: parsed.error };
   if (!parsed.token) return { mode: 'anonymous', scopes: [] };
+  let verified;
+  let lastError;
+  for (const candidate of [{ issuer: config.issuer, jwksUri: config.jwksUri }, ...(config.legacyIssuer ? [{ issuer: config.legacyIssuer, jwksUri: config.legacyJwksUri }] : [])]) {
+    try {
+      const result = await verify(parsed.token, jwksFor(candidate.jwksUri), {
+        issuer: candidate.issuer, audience: config.audience, clockTolerance: 30,
+      });
+      verified = { payload: result.payload, issuer: candidate.issuer };
+      break;
+    } catch (error) { lastError = error; }
+  }
+  if (!verified) return { mode: 'denied', error: 'invalid_token', description: String(lastError?.message || 'token verification failed').slice(0, 180) };
   try {
-    const { payload } = await verify(parsed.token, jwksFor(config.jwksUri), {
-      issuer: config.issuer,
-      audience: config.audience,
-      clockTolerance: 30,
-    });
-    const tenantId = tenantIdFromClaims(payload, config.issuer);
+    const { payload, issuer } = verified;
+    const tenantId = tenantIdFromClaims(payload, issuer);
     if (!tenantId) return { mode: 'denied', error: 'invalid_token', description: 'token has no tenant-bound subject' };
     const rawScopes = payload.scope ?? payload.scp ?? [];
     const scopes = Array.isArray(rawScopes) ? rawScopes.map(String) : String(rawScopes).split(/\s+/).filter(Boolean);
     return {
-      mode: 'oauth', tenantId, scopes,
+      mode: 'oauth', tenantId, scopes, issuer,
       subjectHash: createHash('sha256').update(String(payload.sub || '')).digest('hex').slice(0, 16),
       // Never returned by a tool or persisted; only the opt-in edge adapter
       // may exchange this audience-bound subject token for a /v1 token.
       bearerToken: parsed.token,
     };
-  } catch (error) {
-    return { mode: 'denied', error: 'invalid_token', description: String(error?.message || 'token verification failed').slice(0, 180) };
-  }
+  } catch { return { mode: 'denied', error: 'invalid_token', description: 'token claims invalid' }; }
 }
 
 export const hasScope = (auth, scope) => auth?.mode === 'oauth' && auth.scopes.includes(scope);

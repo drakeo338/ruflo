@@ -71,7 +71,7 @@ export class EdgeVectorMemory {
   invalidate(tenantId) { this.fallback.invalidate(tenantId); }
 
   async #token(auth, scope) {
-    if (!auth?.bearerToken || auth.mode !== 'oauth') throw new Error('edge subject token required');
+    if (!auth?.bearerToken || auth.mode !== 'oauth' || auth.issuer !== EDGE_ISSUER) throw new Error('edge subject token required');
     return this.exchange(auth.bearerToken, scope, { clientId: this.clientId, privateJwk: this.privateJwk, fetchImpl: this.fetchImpl });
   }
 
@@ -83,18 +83,21 @@ export class EdgeVectorMemory {
     });
     if (response.status === 404) return { missing: true };
     if (!response.ok) throw new Error(`edge request failed (${response.status})`);
-    return response.json();
+    const raw = await response.text();
+    if (raw.length > 512 * 1024) throw new Error('edge response too large');
+    return raw ? JSON.parse(raw) : {};
   }
 
   // Firestore remains canonical. A failed derived-index write is reported,
   // never allowed to erase the successfully stored memory.
   async upsert(tenantId, memory, auth) {
+    if (auth?.issuer !== EDGE_ISSUER) return { edgeIndex: 'deferred', reason: 'legacy_oauth' };
     if (Buffer.byteLength(memory.text, 'utf8') > 8192) return { edgeIndex: 'deferred', reason: 'text_too_long' };
     try {
       const token = await this.#token(auth, 'ruvector:write');
       const collection = edgeCollectionName(memory.teamId);
       const upsert = () => this.#request(token, `/collections/${collection}/vectors`, {
-        method: 'POST', body: { vectors: [{ id: edgeVectorId(memory.id), text: memory.text }] },
+        method: 'POST', body: { vectors: [{ id: edgeVectorId(memory.id), text: memory.text, metadata: { memory_id: memory.id } }] },
         key: `aitm-upsert-${createHash('sha256').update(`${memory.id}:${memory.contentHash}`).digest('hex')}`,
       });
       if ((await upsert()).missing) {
@@ -107,19 +110,24 @@ export class EdgeVectorMemory {
 
   async search(tenantId, { teamId, query, limit = 5 }, auth) {
     const local = await this.fallback.search(tenantId, { teamId, query, limit });
+    if (auth?.issuer !== EDGE_ISSUER) return { ...local, edgeStatus: 'legacy_oauth' };
     try {
       const token = await this.#token(auth, 'ruvector:read');
       const collection = edgeCollectionName(teamId);
       const result = await this.#request(token, `/collections/${collection}/query`, {
-        method: 'POST', body: { text: query, top_k: Math.min(50, limit * 5) },
+        method: 'POST', body: { text: query, top_k: Math.min(30, limit * 3), include: ['metadata'] },
       });
       if (result.missing) return { ...local, edgeStatus: 'collection_missing' };
       if (!Array.isArray(result.matches)) throw new Error('edge result invalid');
-      const memories = await this.store.listMemories(tenantId, { teamId });
+      const candidateIds = result.matches.slice(0, 30).map((m) => m.metadata?.memory_id)
+        .filter((id) => typeof id === 'string' && id.length <= 120);
+      const memories = this.store.getMemories
+        ? await this.store.getMemories(tenantId, [...new Set(candidateIds)], { teamId })
+        : (await this.store.listMemories(tenantId, { teamId })).filter((m) => candidateIds.includes(m.id));
       const byId = new Map(memories.map((m) => [edgeVectorId(m.id), m]));
-      const remote = result.matches.slice(0, 50).map((m) => ({
+      const remote = result.matches.slice(0, 30).map((m) => ({
         score: Number.isFinite(m.distance) ? 1 / (1 + Math.max(0, m.distance)) : NaN,
-        distance: m.distance, memory: byId.get(m.id), source: 'ruvector-edge',
+        distance: m.distance, memory: edgeVectorId(m.metadata?.memory_id || '') === m.id ? byId.get(m.id) : undefined, source: 'ruvector-edge',
       })).filter((m) => m.memory && Number.isFinite(m.score));
       const seen = new Set(remote.map((m) => m.memory.id));
       const lexical = local.results.filter((m) => !seen.has(m.memory.id)).map((m) => ({ ...m, source: 'lexical-fallback' }));

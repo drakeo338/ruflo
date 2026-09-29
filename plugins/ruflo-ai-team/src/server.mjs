@@ -39,10 +39,12 @@ export async function createAiTeamService({ store, vectorMemory, verifyToken, po
   const issuer = (process.env.RUFLO_AI_TEAM_OAUTH_ISSUER || 'https://auth.cognitum.one').replace(/\/$/, '');
   const edgeMode = process.env.RUFLO_AI_TEAM_VECTOR === 'edge';
   if (edgeMode && issuer !== EDGE_ISSUER) throw new Error('edge vector mode requires the edge OAuth issuer');
+  const legacyIssuer = edgeMode ? (process.env.RUFLO_AI_TEAM_OAUTH_LEGACY_ISSUER || '').replace(/\/$/, '') : '';
+  if (legacyIssuer && legacyIssuer !== 'https://auth.cognitum.one') throw new Error('unsupported legacy OAuth issuer');
   vectorMemory ||= edgeMode ? edgeVectorMemoryFromEnv(store) : await vectorMemoryFromEnv(store);
   const audience = process.env.RUFLO_AI_TEAM_OAUTH_AUDIENCE || `${publicUrl}/mcp`;
   const jwksUri = process.env.RUFLO_AI_TEAM_OAUTH_JWKS_URI || `${issuer}/.well-known/jwks.json`;
-  const authConfig = { issuer, audience, jwksUri };
+  const authConfig = { issuer, audience, jwksUri, legacyIssuer, legacyJwksUri: legacyIssuer ? `${legacyIssuer}/.well-known/jwks.json` : undefined };
   const metadataUrl = `${publicUrl}/.well-known/oauth-protected-resource/mcp`;
 
   const buildMcp = (auth) => {
@@ -117,7 +119,7 @@ export async function createAiTeamService({ store, vectorMemory, verifyToken, po
     const url=new URL(req.url,`http://${req.headers.host||'localhost'}`);
     if(req.method==='OPTIONS'){res.setHeader('access-control-allow-methods','GET,POST,OPTIONS');res.setHeader('access-control-allow-headers','content-type,authorization,mcp-session-id,mcp-protocol-version,accept');return res.writeHead(204).end();}
     if(url.pathname==='/health')return res.writeHead(200,{'content-type':'application/json'}).end(JSON.stringify({ok:true,service:'ruflo-ai-team',version:VERSION}));
-    if(url.pathname==='/.well-known/oauth-protected-resource/mcp'||url.pathname==='/.well-known/oauth-protected-resource')return res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'}).end(JSON.stringify(protectedResourceMetadata({resource:url.pathname.endsWith('/mcp')?`${publicUrl}/mcp`:publicUrl,issuer})));
+    if(url.pathname==='/.well-known/oauth-protected-resource/mcp'||url.pathname==='/.well-known/oauth-protected-resource')return res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'}).end(JSON.stringify(protectedResourceMetadata({resource:url.pathname.endsWith('/mcp')?`${publicUrl}/mcp`:publicUrl,issuer,legacyIssuer})));
     if(req.method==='GET'&&url.pathname==='/privacy')return res.writeHead(200,{'content-type':'text/html;charset=utf-8'}).end(privacyPage());
     if(req.method==='GET'&&url.pathname==='/terms')return res.writeHead(200,{'content-type':'text/html;charset=utf-8'}).end(termsPage());
     if(req.method==='GET'&&url.pathname==='/support')return res.writeHead(200,{'content-type':'text/html;charset=utf-8'}).end(supportPage());
