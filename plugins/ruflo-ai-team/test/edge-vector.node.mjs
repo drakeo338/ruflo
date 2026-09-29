@@ -52,6 +52,21 @@ test('missing edge auth or collection is explicitly degraded, never cross-tenant
   assert.deepEqual(await edge.upsert('t', { teamId: team.id, id: 'local', text: 'Local only', contentHash: 'a' }, auth), { edgeIndex: 'deferred', reason: 'edge_unavailable_or_unprovisioned' });
 });
 
+test('a full edge result page skips the unbounded lexical scan', async () => {
+  const store = new InMemoryStore();
+  const team = await store.createTeam('t', { name: 'T', objective: '', roles: [] });
+  const memory = await store.remember('t', { teamId: team.id, key: 'm1', text: 'Vector result' });
+  const fallback = { invalidate() {}, async search() { throw new Error('unexpected lexical scan'); } };
+  const edge = new EdgeVectorMemory(store, {
+    clientId: 'ruflo-ai-team', privateJwk, fallback, exchange: async () => 'edge-read',
+    fetchImpl: async () => Response.json({ matches: [{ id: edgeVectorId(memory.id), distance: 0.2, metadata: { memory_id: memory.id } }] }),
+  });
+  const result = await edge.search('t', { teamId: team.id, query: 'Vector', limit: 1 }, auth);
+  assert.equal(result.edgeStatus, 'active');
+  assert.equal(result.degraded, false);
+  assert.equal(result.results[0].memory.id, memory.id);
+});
+
 test('edge collection and vector names cannot contain user-controlled path segments', () => {
   assert.match(edgeCollectionName('../other?'), /^aitm-[a-f0-9]{32}$/);
   assert.match(edgeVectorId('../../x'), /^m-[a-f0-9]{64}$/);

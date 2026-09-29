@@ -109,15 +109,15 @@ export class EdgeVectorMemory {
   }
 
   async search(tenantId, { teamId, query, limit = 5 }, auth) {
-    const local = await this.fallback.search(tenantId, { teamId, query, limit });
-    if (auth?.issuer !== EDGE_ISSUER) return { ...local, edgeStatus: 'legacy_oauth' };
+    const local = () => this.fallback.search(tenantId, { teamId, query, limit });
+    if (auth?.issuer !== EDGE_ISSUER) return { ...await local(), edgeStatus: 'legacy_oauth' };
     try {
       const token = await this.#token(auth, 'ruvector:read');
       const collection = edgeCollectionName(teamId);
       const result = await this.#request(token, `/collections/${collection}/query`, {
         method: 'POST', body: { text: query, top_k: Math.min(30, limit * 3), include: ['metadata'] },
       });
-      if (result.missing) return { ...local, edgeStatus: 'collection_missing' };
+      if (result.missing) return { ...await local(), edgeStatus: 'collection_missing' };
       if (!Array.isArray(result.matches)) throw new Error('edge result invalid');
       const candidateIds = result.matches.slice(0, 30).map((m) => m.metadata?.memory_id)
         .filter((id) => typeof id === 'string' && id.length <= 120);
@@ -130,10 +130,13 @@ export class EdgeVectorMemory {
         distance: m.distance, memory: edgeVectorId(m.metadata?.memory_id || '') === m.id ? byId.get(m.id) : undefined, source: 'ruvector-edge',
       })).filter((m) => m.memory && Number.isFinite(m.score));
       const seen = new Set(remote.map((m) => m.memory.id));
-      const lexical = local.results.filter((m) => !seen.has(m.memory.id)).map((m) => ({ ...m, source: 'lexical-fallback' }));
-      // Older Firestore rows may not yet be indexed; preserve them explicitly.
+      // A full remote page needs only bounded hydration; avoid a 1,000-row
+      // Firestore scan on the hot path. Sparse results still check older rows.
+      const lexical = remote.length < limit
+        ? (await local()).results.filter((m) => !seen.has(m.memory.id)).map((m) => ({ ...m, source: 'lexical-fallback' }))
+        : [];
       return { backend: 'ruvector-edge-hybrid', degraded: lexical.length > 0, edgeStatus: 'active', results: [...remote, ...lexical].slice(0, limit) };
-    } catch { return { ...local, edgeStatus: 'unavailable_or_unprovisioned' }; }
+    } catch { return { ...await local(), edgeStatus: 'unavailable_or_unprovisioned' }; }
   }
 }
 
