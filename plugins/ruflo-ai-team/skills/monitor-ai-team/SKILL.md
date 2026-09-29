@@ -1,7 +1,7 @@
 ---
 name: monitor-ai-team
 description: Report a RuFlo AI team's progress, blockers, task ownership, and remaining planned budget.
-allowed-tools: mcp__ruflo-ai-team__team_get mcp__ruflo-ai-team__task_list mcp__ruflo-ai-team__evidence_export
+allowed-tools: mcp__plugin_ruflo-ai-team_ruflo-ai-team__team_get mcp__plugin_ruflo-ai-team_ruflo-ai-team__task_list mcp__plugin_ruflo-ai-team_ruflo-ai-team__evidence_export
 ---
 
 # Monitor AI Team

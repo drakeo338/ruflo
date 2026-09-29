@@ -1,7 +1,7 @@
 ---
 name: remember-team-context
 description: Store and retrieve approved tenant-local team context with RuVector-backed isolation and provenance.
-allowed-tools: mcp__ruflo-ai-team__memory_remember mcp__ruflo-ai-team__memory_search
+allowed-tools: mcp__plugin_ruflo-ai-team_ruflo-ai-team__memory_remember mcp__plugin_ruflo-ai-team_ruflo-ai-team__memory_search
 ---
 
 # Remember Team Context

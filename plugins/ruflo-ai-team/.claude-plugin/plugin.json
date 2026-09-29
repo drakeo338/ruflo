@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "author": { "name": "ruvnet", "url": "https://github.com/ruvnet" },
   "homepage": "https://team.ruv.io",
+  "privacyPolicyUrl": "https://team.ruv.io/privacy",
+  "icon": "icon.svg",
   "license": "MIT",
   "keywords": ["ruflo", "ai-team", "multi-agent", "automation", "ruvector", "mcp"]
 }

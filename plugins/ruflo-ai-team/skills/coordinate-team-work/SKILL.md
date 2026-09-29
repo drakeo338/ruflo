@@ -1,7 +1,7 @@
 ---
 name: coordinate-team-work
 description: Divide approved work among specialized RuFlo roles and keep task state synchronized.
-allowed-tools: mcp__ruflo-ai-team__task_create mcp__ruflo-ai-team__task_list mcp__ruflo-ai-team__task_update
+allowed-tools: mcp__plugin_ruflo-ai-team_ruflo-ai-team__task_create mcp__plugin_ruflo-ai-team_ruflo-ai-team__task_list mcp__plugin_ruflo-ai-team_ruflo-ai-team__task_update
 ---
 
 # Coordinate Team Work

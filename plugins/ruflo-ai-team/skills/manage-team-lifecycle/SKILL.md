@@ -1,7 +1,7 @@
 ---
 name: manage-team-lifecycle
 description: Pause, resume, or complete a RuFlo AI team while preserving its tenant-local evidence.
-allowed-tools: mcp__ruflo-ai-team__team_get mcp__ruflo-ai-team__team_update mcp__ruflo-ai-team__evidence_export
+allowed-tools: mcp__plugin_ruflo-ai-team_ruflo-ai-team__team_get mcp__plugin_ruflo-ai-team_ruflo-ai-team__team_update mcp__plugin_ruflo-ai-team_ruflo-ai-team__evidence_export
 ---
 
 # Manage Team Lifecycle

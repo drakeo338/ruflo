@@ -1,7 +1,7 @@
 ---
 name: launch-ai-team
 description: Turn a reviewed goal into a bounded RuFlo AI team, run, and task plan without external side effects.
-allowed-tools: mcp__ruflo-ai-team__team_templates_list mcp__ruflo-ai-team__team_create mcp__ruflo-ai-team__run_create mcp__ruflo-ai-team__task_create
+allowed-tools: mcp__plugin_ruflo-ai-team_ruflo-ai-team__team_templates_list mcp__plugin_ruflo-ai-team_ruflo-ai-team__team_create mcp__plugin_ruflo-ai-team_ruflo-ai-team__run_create mcp__plugin_ruflo-ai-team_ruflo-ai-team__task_create
 ---
 
 # Launch AI Team

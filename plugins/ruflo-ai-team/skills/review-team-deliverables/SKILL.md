@@ -1,7 +1,7 @@
 ---
 name: review-team-deliverables
 description: Review RuFlo team results against acceptance criteria using the evidence bundle.
-allowed-tools: mcp__ruflo-ai-team__team_get mcp__ruflo-ai-team__task_list mcp__ruflo-ai-team__memory_search mcp__ruflo-ai-team__evidence_export
+allowed-tools: mcp__plugin_ruflo-ai-team_ruflo-ai-team__team_get mcp__plugin_ruflo-ai-team_ruflo-ai-team__task_list mcp__plugin_ruflo-ai-team_ruflo-ai-team__memory_search mcp__plugin_ruflo-ai-team_ruflo-ai-team__evidence_export
 ---
 
 # Review Team Deliverables
