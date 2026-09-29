@@ -61,7 +61,7 @@ try {
   if (!tokenResponse.ok) throw new Error(`token ${tokenResponse.status}`);
   const token = await tokenResponse.json();
   if (!token.access_token || !String(token.scope).includes('team:write')) throw new Error('token scope invalid');
-  const call = async (name, args) => {
+  const call = async (name, args, { allowError = false } = {}) => {
     const response = await fetch(endpoint, { method: 'POST', headers: {
       authorization: `Bearer ${token.access_token}`, 'content-type': 'application/json',
       accept: 'application/json, text/event-stream',
@@ -70,22 +70,28 @@ try {
     const raw = await response.text();
     const line = raw.split('\n').find((s) => s.startsWith('data: '));
     const rpc = JSON.parse(line ? line.slice(6) : raw);
-    if (rpc.result?.isError) throw new Error(`${name} MCP error`);
-    return JSON.parse(rpc.result.content[0].text);
+    if (rpc.result?.isError && !allowError) throw new Error(`${name} MCP error`);
+    return { isError: Boolean(rpc.result?.isError), data: JSON.parse(rpc.result.content[0].text) };
   };
-  const team = await call('team_create', { name: `Edge canary ${new Date().toISOString().slice(0, 10)}`,
+  const denyTeamId = process.env.RUFLO_AI_TEAM_E2E_DENY_TEAM_ID;
+  if (denyTeamId) {
+    if (!/^team_[0-9a-f-]{36}$/.test(denyTeamId)) throw new Error('denial team id invalid');
+    const denied = await call('team_get', { teamId: denyTeamId }, { allowError: true });
+    if (!denied.isError || denied.data.error !== 'not_found') throw new Error('cross-workspace team denial failed');
+  }
+  const { data: team } = await call('team_create', { name: `Edge canary ${new Date().toISOString().slice(0, 10)}`,
     objective: 'Verify tenant-scoped edge memory indexing and retrieval.' });
   if (!team.id) throw new Error('team create missing id');
   const unique = `Canary ruvector memory ${randomUUID()} blue lighthouse`;
-  const remembered = await call('memory_remember', { teamId: team.id, key: `edge-${randomUUID()}`, text: unique });
+  const { data: remembered } = await call('memory_remember', { teamId: team.id, key: `edge-${randomUUID()}`, text: unique });
   if (remembered.edgeIndex !== 'indexed') throw new Error(`edge indexing ${remembered.edgeIndex}:${remembered.reason || ''}`);
-  const fenced = await call('memory_search', { teamId: team.id, query: 'blue lighthouse', limit: 5 });
+  const { data: fenced } = await call('memory_search', { teamId: team.id, query: 'blue lighthouse', limit: 5 });
   const match = fenced.data.match(/^BEGIN_UNTRUSTED_[^\n]+\n([\s\S]+)\nEND_UNTRUSTED_/);
   if (!match) throw new Error('search fence missing');
   const search = JSON.parse(match[1]);
   if (search.edgeStatus !== 'active' || search.backend !== 'ruvector-edge-hybrid'
     || !search.results.some((r) => r.memory.id === remembered.id)) throw new Error('edge retrieval failed');
-  console.log(JSON.stringify({ ok: true, endpoint, teamId: team.id, edgeIndex: remembered.edgeIndex,
+  console.log(JSON.stringify({ ok: true, endpoint, crossWorkspaceDenied: Boolean(denyTeamId), teamId: team.id, edgeIndex: remembered.edgeIndex,
     backend: search.backend, edgeStatus: search.edgeStatus, resultCount: search.results.length }));
 } finally {
   clearTimeout(loginTimer);
