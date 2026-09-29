@@ -39,8 +39,14 @@ function tokenFrom(req) {
   return token ? { token } : {};
 }
 
-export function tenantIdFromClaims(payload) {
-  const source = payload.tenant_id ?? payload.org_id ?? payload.workspace_id ?? payload.sub;
+export function tenantIdFromClaims(payload, issuer) {
+  // Edge tenancy is the verified (upstream issuer, org, workspace) tuple.
+  // Hashing org_id alone would co-mingle two workspaces in Firestore.
+  const edge = issuer === 'https://ruvector-edge-auth.cognitum-consulting-mail.workers.dev';
+  const source = edge
+    ? (payload.upstream_iss && payload.org_id && payload.workspace_id
+      ? JSON.stringify([payload.upstream_iss, payload.org_id, payload.workspace_id]) : undefined)
+    : (payload.tenant_id ?? payload.org_id ?? payload.workspace_id ?? payload.sub);
   if (!source) return undefined;
   return `t_${createHash('sha256').update(String(source)).digest('hex').slice(0, 24)}`;
 }
@@ -55,13 +61,16 @@ export async function authenticate(req, config, verify = jwtVerify) {
       audience: config.audience,
       clockTolerance: 30,
     });
-    const tenantId = tenantIdFromClaims(payload);
+    const tenantId = tenantIdFromClaims(payload, config.issuer);
     if (!tenantId) return { mode: 'denied', error: 'invalid_token', description: 'token has no tenant-bound subject' };
     const rawScopes = payload.scope ?? payload.scp ?? [];
     const scopes = Array.isArray(rawScopes) ? rawScopes.map(String) : String(rawScopes).split(/\s+/).filter(Boolean);
     return {
       mode: 'oauth', tenantId, scopes,
       subjectHash: createHash('sha256').update(String(payload.sub || '')).digest('hex').slice(0, 16),
+      // Never returned by a tool or persisted; only the opt-in edge adapter
+      // may exchange this audience-bound subject token for a /v1 token.
+      bearerToken: parsed.token,
     };
   } catch (error) {
     return { mode: 'denied', error: 'invalid_token', description: String(error?.message || 'token verification failed').slice(0, 180) };
