@@ -59,10 +59,14 @@ export class InMemoryStore {
   #audit(bucket, actor, eventType, targetId) { bucket.audit.push({ id: randomUUID(), at: now(), actor, eventType, targetId }); }
 }
 
-export async function storeFromEnv() {
-  if (process.env.RUFLO_AI_TEAM_STORE !== 'firestore') return new InMemoryStore();
+export async function storeFromEnv(options = {}) {
+  // Explicit deployment options (and any future CLI flags) take precedence over env configuration.
+  const storeMode = options.storeMode ?? process.env.RUFLO_AI_TEAM_STORE ?? 'memory';
+  if (storeMode !== 'firestore') return new InMemoryStore();
   const { Firestore } = await import('@google-cloud/firestore');
-  return new FirestoreStore(new Firestore({ projectId: process.env.GOOGLE_CLOUD_PROJECT, databaseId: process.env.RUFLO_AI_TEAM_DATABASE || '(default)' }));
+  const projectId = options.projectId ?? process.env.GOOGLE_CLOUD_PROJECT;
+  const databaseId = options.databaseId ?? process.env.RUFLO_AI_TEAM_DATABASE ?? '(default)';
+  return new FirestoreStore(new Firestore({ projectId, databaseId }));
 }
 
 export class FirestoreStore {
