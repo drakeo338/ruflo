@@ -3,7 +3,12 @@ import { createServer } from 'node:http';
 
 const ISSUER = 'https://ruvector-edge-auth.cognitum-consulting-mail.workers.dev';
 const RESOURCE = 'https://team.ruv.io/mcp';
-const CANARY = 'https://edge-canary---ruflo-ai-team-63rzcdswba-uc.a.run.app/mcp';
+const ENDPOINTS = new Set([
+  'https://team.ruv.io/mcp',
+  'https://edge-canary---ruflo-ai-team-63rzcdswba-uc.a.run.app/mcp',
+]);
+const endpoint = process.env.RUFLO_AI_TEAM_E2E_ENDPOINT || 'https://team.ruv.io/mcp';
+if (!ENDPOINTS.has(endpoint)) throw new Error('E2E endpoint is not allowlisted');
 const b64u = (b) => Buffer.from(b).toString('base64url');
 const verifier = b64u(randomBytes(48));
 const challenge = b64u(createHash('sha256').update(verifier).digest());
@@ -57,7 +62,7 @@ try {
   const token = await tokenResponse.json();
   if (!token.access_token || !String(token.scope).includes('team:write')) throw new Error('token scope invalid');
   const call = async (name, args) => {
-    const response = await fetch(CANARY, { method: 'POST', headers: {
+    const response = await fetch(endpoint, { method: 'POST', headers: {
       authorization: `Bearer ${token.access_token}`, 'content-type': 'application/json',
       accept: 'application/json, text/event-stream',
     }, body: JSON.stringify({ jsonrpc: '2.0', id: randomUUID(), method: 'tools/call', params: { name, arguments: args } }) });
@@ -80,7 +85,7 @@ try {
   const search = JSON.parse(match[1]);
   if (search.edgeStatus !== 'active' || search.backend !== 'ruvector-edge-hybrid'
     || !search.results.some((r) => r.memory.id === remembered.id)) throw new Error('edge retrieval failed');
-  console.log(JSON.stringify({ ok: true, teamId: team.id, edgeIndex: remembered.edgeIndex,
+  console.log(JSON.stringify({ ok: true, endpoint, teamId: team.id, edgeIndex: remembered.edgeIndex,
     backend: search.backend, edgeStatus: search.edgeStatus, resultCount: search.results.length }));
 } finally {
   clearTimeout(loginTimer);
