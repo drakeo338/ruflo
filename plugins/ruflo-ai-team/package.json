@@ -7,7 +7,7 @@
   "main": "src/server.mjs",
   "scripts": {
     "start": "node src/server.mjs",
-    "test": "node --test test/*.test.mjs",
+    "test": "node --test test/*.node.mjs",
     "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
