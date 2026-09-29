@@ -14,7 +14,7 @@ The adapter is not enabled by default. Enabling it requires the edge OAuth issue
 
 ## Failure behavior and limits
 
-Index writes report `indexed` or `deferred`; Firestore writes are never rolled back by index failure. Search reports `ruvector-edge-hybrid` only on a successful edge query and `lexical-degraded` on exchange, provisioning, quota, or gateway failures. Edge embedding accepts at most 8 KiB of text; longer accepted Firestore memories remain local and are marked deferred. The adapter never auto-claims an edge tenant, runs an agent, shares evidence, or treats PR #1098's undeployed raised caps as production capacity. Existing rows require a bounded, consented backfill before the edge index can be treated as complete.
+Index writes report `indexed` or `deferred`; Firestore writes are never rolled back by index failure. Search reports `ruvector-edge-hybrid` only on a successful edge query and `lexical-degraded` on exchange, provisioning, quota, or gateway failures. Edge embedding accepts at most 8 KiB of text; longer accepted Firestore memories remain local and are marked deferred. The adapter never auto-claims an edge tenant, runs an agent, or shares evidence. Workers Paid caps have a live deploy receipt, but the adapter does not rely on them. Existing rows require a bounded, consented backfill before the edge index can be treated as complete.
 
 ## Verification gate
 

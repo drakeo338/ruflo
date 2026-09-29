@@ -27,7 +27,7 @@ The edge adapter is implemented but **not enabled** in the production manifest. 
 3. Switch `RUFLO_AI_TEAM_OAUTH_ISSUER` to `https://ruvector-edge-auth.cognitum-consulting-mail.workers.dev` and its JWKS URI to `.../.well-known/jwks.json`. The audience remains exactly `https://team.ruv.io/mcp`. Reconnect ChatGPT/Claude OAuth clients; existing Cognitum-issued tokens cannot exchange. Plan a consented migration for existing Firestore records, since edge tenancy includes workspace.
 4. Verify the user has claimed the intended edge tenant and can create a team collection. Disclose that approved memory text and search queries go to RuVector edge and consume its metered work units. Prove two-workspace isolation, token exchange, memory write/query, revocation, degraded fallback, and measured quota use in a browser E2E before enabling broadly.
 
-Writes longer than 8 KiB remain only in Firestore and report `edgeIndex: deferred`. Existing rows are not silently migrated; successful edge queries are labelled `ruvector-edge-hybrid` and supplement missing rows with local lexical results. Raised caps in RuVector PR #1098 are not assumed deployed.
+Writes longer than 8 KiB remain only in Firestore and report `edgeIndex: deferred`. Existing rows are not silently migrated; successful edge queries are labelled `ruvector-edge-hybrid` and supplement missing rows with local lexical results. Workers Paid caps in RuVector PR #1098 have a live deploy receipt; this adapter does not depend on those higher caps.
 
 ## Local verification
 
