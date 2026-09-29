@@ -1,0 +1,15 @@
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+const root=new URL('../',import.meta.url); const read=(p)=>readFileSync(new URL(p,root),'utf8'); const checks=[]; const check=(name,ok)=>{if(!ok)throw new Error(name);checks.push(name)};
+const manifest=JSON.parse(read('.claude-plugin/plugin.json'));
+check('manifest name',manifest.name==='ruflo-ai-team');
+check('manifest semver',/^\d+\.\d+\.\d+$/.test(manifest.version));
+check('manifest keywords',manifest.keywords?.includes('ruvector'));
+check('no component arrays',!manifest.skills&&!manifest.commands&&!manifest.agents);
+for(const dir of ['skills','commands','agents','docs/adrs'])check(`${dir} exists`,existsSync(new URL(dir,root)));
+check('README v3.48 pin',read('README.md').includes('v3.48'));
+check('README namespace',read('README.md').includes('Namespace coordination'));
+check('ADR proposed',read('docs/adrs/0001-multitenant-service-boundary.md').includes('Status: Proposed'));
+const tests=readdirSync(new URL('test/',root)).filter((name)=>name.endsWith('.test.mjs')).map((name)=>`test/${name}`);
+const result=spawnSync(process.execPath,['--test',...tests],{cwd:new URL('.',root),shell:false,stdio:'inherit'}); check('tests pass',result.status===0);
+console.log(`smoke ok: ${checks.length} checks`);

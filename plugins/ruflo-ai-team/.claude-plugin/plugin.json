@@ -1,0 +1,9 @@
+{
+  "name": "ruflo-ai-team",
+  "description": "Give Claude a tenant-isolated AI team that divides work, coordinates progress, recalls approved context, and returns evidence-backed results.",
+  "version": "0.1.0",
+  "author": { "name": "ruvnet", "url": "https://github.com/ruvnet" },
+  "homepage": "https://team.ruv.io",
+  "license": "MIT",
+  "keywords": ["ruflo", "ai-team", "multi-agent", "automation", "ruvector", "mcp"]
+}
