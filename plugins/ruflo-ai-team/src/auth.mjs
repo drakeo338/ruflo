@@ -3,14 +3,10 @@ import { createRemoteJWKSet, jwtVerify } from 'jose';
 
 export const SCOPES = Object.freeze({ read: 'team:read', write: 'team:write', run: 'team:run' });
 
-let cachedJwks;
-let cachedJwksUri;
+const cachedJwks = new Map();
 const jwksFor = (uri) => {
-  if (!cachedJwks || cachedJwksUri !== uri) {
-    cachedJwks = createRemoteJWKSet(new URL(uri));
-    cachedJwksUri = uri;
-  }
-  return cachedJwks;
+  if (!cachedJwks.has(uri)) cachedJwks.set(uri, createRemoteJWKSet(new URL(uri)));
+  return cachedJwks.get(uri);
 };
 
 export function protectedResourceMetadata({ resource, issuer, legacyIssuer }) {
