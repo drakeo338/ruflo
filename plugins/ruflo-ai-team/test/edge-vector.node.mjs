@@ -11,8 +11,10 @@ const auth = { mode: 'oauth', issuer: EDGE_ISSUER, bearerToken: 'subject' };
 test('edge adapter indexes text and hydrates only the authenticated team from canonical store', async () => {
   const store = new InMemoryStore();
   const a = await store.createTeam('tenant-a', { name: 'A', objective: '', roles: [] });
+  const sibling = await store.createTeam('tenant-a', { name: 'Sibling', objective: '', roles: [] });
   const b = await store.createTeam('tenant-b', { name: 'B', objective: '', roles: [] });
   const own = await store.remember('tenant-a', { teamId: a.id, key: 'own', text: 'Private launch plan' });
+  const otherTeam = await store.remember('tenant-a', { teamId: sibling.id, key: 'sibling', text: 'Sibling team secret' });
   const foreign = await store.remember('tenant-b', { teamId: b.id, key: 'foreign', text: 'Other tenant secret' });
   const calls = [];
   let collectionExists = false;
@@ -20,7 +22,7 @@ test('edge adapter indexes text and hydrates only the authenticated team from ca
     calls.push({ url, options });
     if (url.endsWith(`/collections/${edgeCollectionName(a.id)}/vectors`) && !collectionExists) return Response.json({}, { status: 404 });
     if (url.endsWith('/collections') && options.method === 'POST') { collectionExists = true; return Response.json({ name: edgeCollectionName(a.id) }, { status: 201 }); }
-    if (url.endsWith('/query')) return Response.json({ matches: [{ id: edgeVectorId(foreign.id), distance: 0.01, metadata: { memory_id: foreign.id } }, { id: edgeVectorId(own.id), distance: 0.15, metadata: { memory_id: own.id } }] });
+    if (url.endsWith('/query')) return Response.json({ matches: [{ id: edgeVectorId(foreign.id), distance: 0.01, metadata: { memory_id: foreign.id } }, { id: edgeVectorId(otherTeam.id), distance: 0.05, metadata: { memory_id: otherTeam.id } }, { id: edgeVectorId(own.id), distance: 0.15, metadata: { memory_id: own.id } }] });
     return Response.json({ upserted: 1 });
   };
   const exchange = async (_subject, scope) => `edge-${scope}`;
@@ -34,6 +36,7 @@ test('edge adapter indexes text and hydrates only the authenticated team from ca
   assert.equal(result.results[0].memory.id, own.id);
   assert.ok(result.results.every((m) => m.memory.teamId === a.id));
   assert.ok(!JSON.stringify(result).includes(foreign.text));
+  assert.ok(!JSON.stringify(result).includes(otherTeam.text));
 });
 
 test('missing edge auth or collection is explicitly degraded, never cross-tenant', async () => {
