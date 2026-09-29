@@ -35,7 +35,7 @@ export async function createAiTeamService({ store, vectorMemory, verifyToken, po
   vectorMemory ||= await vectorMemoryFromEnv(store);
   const publicUrl = (process.env.RUFLO_AI_TEAM_PUBLIC_URL || 'https://team.ruv.io').replace(/\/$/, '');
   const issuer = (process.env.RUFLO_AI_TEAM_OAUTH_ISSUER || 'https://auth.cognitum.one').replace(/\/$/, '');
-  const audience = process.env.RUFLO_AI_TEAM_OAUTH_CLIENT_ID || 'ruflo-ai-team';
+  const audience = process.env.RUFLO_AI_TEAM_OAUTH_AUDIENCE || `${publicUrl}/mcp`;
   const jwksUri = process.env.RUFLO_AI_TEAM_OAUTH_JWKS_URI || `${issuer}/.well-known/jwks.json`;
   const authConfig = { issuer, audience, jwksUri };
   const metadataUrl = `${publicUrl}/.well-known/oauth-protected-resource/mcp`;
@@ -95,7 +95,7 @@ export async function createAiTeamService({ store, vectorMemory, verifyToken, po
     if(url.pathname!=='/mcp'||req.method!=='POST')return res.writeHead(404).end('not found');
     let parsed; try{parsed=JSON.parse(await readBody(req)||'{}');}catch{return res.writeHead(400,{'content-type':'application/json'}).end('{"error":"invalid_request"}');}
     const auth=await authenticate(req,authConfig,verifyToken);
-    if(auth.mode==='denied')return res.writeHead(401,{'content-type':'application/json','www-authenticate':challengeHeader(metadataUrl,{error:auth.error,description:auth.description})}).end(JSON.stringify({error:auth.error,error_description:auth.description}));
+    if(auth.mode==='denied')return res.writeHead(401,{'content-type':'application/json','www-authenticate':challengeHeader(metadataUrl,{error:auth.error,description:auth.description,scope:SCOPES.read})}).end(JSON.stringify({error:auth.error,error_description:auth.description}));
     const called=parsed?.method==='tools/call'?parsed?.params?.name:null;
     const needsAuth=called||parsed?.method==='resources/read';
     if(needsAuth&&auth.mode!=='oauth'){const scope=called?TOOL_SCOPES[called]:SCOPES.read;return res.writeHead(401,{'content-type':'application/json','www-authenticate':challengeHeader(metadataUrl,{error:'invalid_token',description:'OAuth authorization is required for tenant data',scope})}).end(JSON.stringify({error:'invalid_token'}));}
