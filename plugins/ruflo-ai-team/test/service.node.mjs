@@ -48,8 +48,11 @@ test('tools/list is open but tenant calls challenge with RFC 9728 metadata', asy
 test('legacy client-audience bearer tokens cannot access or mask discovery', async (t) => {
   const f=await fixture(); t.after(()=>f.server.close());
   const listed=await rpc(f.base,{jsonrpc:'2.0',id:1,method:'tools/list',params:{}},'legacy:all');
-  assert.equal(listed.status,401);
-  assert.match(listed.wwwAuth,/invalid_token/);
+  assert.equal(listed.status,200);
+  assert.equal(listed.body.result.tools.length,12);
+  const deniedCall=await call(f.base,'team_list',{},'legacy:all');
+  assert.equal(deniedCall.status,401);
+  assert.match(deniedCall.wwwAuth,/invalid_token/);
 });
 
 test('every tool has explicit annotations and no secret-bearing input field', async (t) => {
