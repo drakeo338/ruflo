@@ -6,6 +6,7 @@ const RESOURCE = 'https://team.ruv.io/mcp';
 const ENDPOINTS = new Set([
   'https://team.ruv.io/mcp',
   'https://edge-canary---ruflo-ai-team-63rzcdswba-uc.a.run.app/mcp',
+  'https://edge-next---ruflo-ai-team-63rzcdswba-uc.a.run.app/mcp',
 ]);
 const endpoint = process.env.RUFLO_AI_TEAM_E2E_ENDPOINT || 'https://team.ruv.io/mcp';
 if (!ENDPOINTS.has(endpoint)) throw new Error('E2E endpoint is not allowlisted');
@@ -77,7 +78,12 @@ try {
   if (denyTeamId) {
     if (!/^team_[0-9a-f-]{36}$/.test(denyTeamId)) throw new Error('denial team id invalid');
     const denied = await call('team_get', { teamId: denyTeamId }, { allowError: true });
-    if (!denied.isError || denied.data.error !== 'not_found') throw new Error('cross-workspace team denial failed');
+    if (!denied.isError || denied.data.error !== 'not_found') {
+      console.error(JSON.stringify({ crossWorkspaceDenied: false, isError: denied.isError,
+        errorCode: typeof denied.data.error === 'string' ? denied.data.error : null,
+        firstTeamVisible: denied.data.id === denyTeamId }));
+      throw new Error('cross-workspace team denial failed');
+    }
   }
   const { data: team } = await call('team_create', { name: `Edge canary ${new Date().toISOString().slice(0, 10)}`,
     objective: 'Verify tenant-scoped edge memory indexing and retrieval.' });
