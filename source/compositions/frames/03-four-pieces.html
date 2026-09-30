@@ -1,0 +1,362 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-Variable.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "JetBrains Mono";
+      src: url("assets/fonts/JetBrainsMono-Variable.woff2") format("woff2");
+      font-weight: 100 800;
+      font-style: normal;
+    }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Inter", sans-serif;
+      color: #f7fbff;
+    }
+
+    #fp03-ground {
+      position: absolute;
+      inset: 0;
+      background: #030611;
+    }
+
+    #fp03-world {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 44%;
+    }
+
+    /* ---------- headline (supporting) ---------- */
+    #fp03-stub {
+      position: absolute;
+      left: 192px;
+      top: 112px;
+      width: 36px;
+      height: 2px;
+      background: #68e4ff;
+      transform-origin: 0 50%;
+    }
+    #fp03-headline {
+      position: absolute;
+      left: 192px;
+      top: 132px;
+      margin: 0;
+      font-size: 80px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      text-transform: lowercase;
+      white-space: nowrap;
+    }
+    #fp03-headline .fp03-word {
+      display: inline-block;
+      margin-right: 0.22em;
+    }
+    #fp03-headline .fp03-muted {
+      color: #bdc9df;
+    }
+
+    /* ---------- card row (focal) ---------- */
+    .fp03-card {
+      position: absolute;
+      top: 250px;
+      width: 360px;
+      height: 440px;
+    }
+    .fp03-outline {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 360px;
+      height: 440px;
+      overflow: visible;
+    }
+    .fp03-outline path {
+      fill: none;
+      stroke: #bdc9df;
+      stroke-opacity: 0.45;
+      stroke-width: 1.5;
+      stroke-linecap: butt;
+      stroke-linejoin: miter;
+    }
+    .fp03-index {
+      position: absolute;
+      left: 36px;
+      top: 34px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #68e4ff;
+    }
+    .fp03-icon {
+      position: absolute;
+      left: 30px;
+      top: 84px;
+      width: 136px;
+      height: 136px;
+      overflow: visible;
+    }
+    .fp03-icon path,
+    .fp03-icon circle {
+      fill: none;
+      stroke: #68e4ff;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .fp03-name {
+      position: absolute;
+      left: 34px;
+      top: 244px;
+      font-size: 68px;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      text-transform: lowercase;
+      color: #f7fbff;
+    }
+    .fp03-role .fp03-rw {
+      display: inline-block;
+    }
+    .fp03-role {
+      position: absolute;
+      left: 36px;
+      top: 336px;
+      width: 288px;
+      height: 70px; /* fixed two-line box (2 x 28px x 1.25), text top-aligned */
+      overflow: hidden;
+      font-size: 28px;
+      font-weight: 500;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      text-transform: lowercase;
+      color: #bdc9df;
+    }
+
+    /* ---------- hairline baseline (background) ---------- */
+    #fp03-baseline {
+      position: absolute;
+      left: 192px;
+      top: 748px;
+      width: 1536px;
+      height: 1px;
+      background: rgba(189, 201, 223, 0.22);
+      transform-origin: 0 50%;
+    }
+  </style>
+
+  <div id="root" data-composition-id="03-four-pieces" data-width="1920" data-height="1080" data-duration="12.781">
+    <div id="fp03-ground" class="clip" data-start="0" data-duration="12.781" data-track-index="0"></div>
+
+    <div id="fp03-world">
+      <div id="fp03-stub"></div>
+      <h2 id="fp03-headline">
+        <span class="fp03-word" id="fp03-w1">four</span><span class="fp03-word" id="fp03-w2">pieces.</span><span class="fp03-word fp03-muted" id="fp03-w3">easy</span><span class="fp03-word fp03-muted" id="fp03-w4">to</span><span class="fp03-word fp03-muted" id="fp03-w5">confuse.</span>
+      </h2>
+
+      <!-- Card 1 — model -->
+      <div class="fp03-card" id="fp03-card1" style="left: 192px">
+        <svg class="fp03-outline" viewBox="0 0 360 440"><path d="M0.75 0.75 H359.25 V439.25 H0.75 Z" /></svg>
+        <div class="fp03-index">01</div>
+        <svg class="fp03-icon" id="fp03-icon1" viewBox="0 0 120 120">
+          <path d="M32 40 L60 24 L88 40" />
+          <path d="M32 40 L42 76 L60 98 L78 76 L88 40" />
+          <path d="M60 24 L60 60 M42 76 L60 60 L78 76 M32 40 L60 60 L88 40" />
+          <circle cx="60" cy="24" r="7" />
+          <circle cx="32" cy="40" r="7" />
+          <circle cx="88" cy="40" r="7" />
+          <circle cx="60" cy="60" r="8" />
+          <circle cx="42" cy="76" r="7" />
+          <circle cx="78" cy="76" r="7" />
+          <circle cx="60" cy="98" r="7" />
+        </svg>
+        <div class="fp03-name">model</div>
+        <div class="fp03-role">does the reasoning</div>
+      </div>
+
+      <!-- Card 2 — skill -->
+      <div class="fp03-card" id="fp03-card2" style="left: 584px">
+        <svg class="fp03-outline" viewBox="0 0 360 440"><path d="M0.75 0.75 H359.25 V439.25 H0.75 Z" /></svg>
+        <div class="fp03-index">02</div>
+        <svg class="fp03-icon" id="fp03-icon2" viewBox="0 0 120 120">
+          <path d="M60 34 C46 26 28 25 12 29 L12 93 C28 89 46 90 60 98 Z" />
+          <path d="M60 34 C74 26 92 25 108 29 L108 93 C92 89 74 90 60 98" />
+          <path d="M24 46 L28 50 L36 42 M24 64 L28 68 L36 60" />
+          <path d="M40 47 L50 47 M40 65 L50 65" />
+          <path d="M72 70 C78 56 88 54 96 46 M90 45 L96 46 L96 52" />
+          <circle cx="74" cy="46" r="4" />
+        </svg>
+        <div class="fp03-name">skill</div>
+        <div class="fp03-role">is a playbook</div>
+      </div>
+
+      <!-- Card 3 — mcp -->
+      <div class="fp03-card" id="fp03-card3" style="left: 976px">
+        <svg class="fp03-outline" viewBox="0 0 360 440"><path d="M0.75 0.75 H359.25 V439.25 H0.75 Z" /></svg>
+        <div class="fp03-index">03</div>
+        <svg class="fp03-icon" id="fp03-icon3" viewBox="0 0 120 120">
+          <path d="M8 60 L20 60" />
+          <path d="M20 46 L44 46 L44 74 L20 74 Z" />
+          <path d="M44 52 L54 52 M44 68 L54 68" />
+          <path d="M58 60 L70 60 L92 34 M70 60 L92 86" />
+          <circle cx="99" cy="28" r="9" />
+          <circle cx="99" cy="92" r="9" />
+          <circle cx="70" cy="60" r="4" />
+        </svg>
+        <div class="fp03-name">mcp</div>
+        <div class="fp03-role"><span class="fp03-rw" id="fp03-r3a">discover and call</span> <span class="fp03-rw" id="fp03-r3b">tools</span></div>
+      </div>
+
+      <!-- Card 4 — runtime -->
+      <div class="fp03-card" id="fp03-card4" style="left: 1368px">
+        <svg class="fp03-outline" viewBox="0 0 360 440"><path d="M0.75 0.75 H359.25 V439.25 H0.75 Z" /></svg>
+        <div class="fp03-index">04</div>
+        <svg class="fp03-icon" id="fp03-icon4" viewBox="0 0 120 120">
+          <path id="fp03-gear" d="M60 20 Z" />
+          <circle cx="60" cy="60" r="13" />
+          <path d="M60 47 L60 38 M60 73 L60 82 M47 60 L38 60 M73 60 L82 60" />
+        </svg>
+        <div class="fp03-name">runtime</div>
+        <div class="fp03-role">performs the work</div>
+      </div>
+
+      <div id="fp03-baseline"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      const root = document.querySelector('[data-composition-id="03-four-pieces"]');
+      const $ = (sel) => root.querySelector(sel);
+      const $$ = (sel) => Array.from(root.querySelectorAll(sel));
+
+      const CYAN = "#68e4ff";
+      const MUTED = "#bdc9df";
+      const CREAM = "#f7fbff";
+      const DURATION = 12.181;
+
+      // ---- deterministic gear outline (8 teeth) ----
+      (function buildGear() {
+        const cx = 60, cy = 60, R = 42, r = 32, teeth = 8;
+        const pts = [];
+        for (let i = 0; i < teeth; i++) {
+          const a = (i * 360) / teeth;
+          [[-15, r], [-8, R], [8, R], [15, r]].forEach(([da, rad]) => {
+            const t = ((a + da - 90) * Math.PI) / 180;
+            pts.push((cx + rad * Math.cos(t)).toFixed(2) + " " + (cy + rad * Math.sin(t)).toFixed(2));
+          });
+        }
+        $("#fp03-gear").setAttribute("d", "M" + pts.join(" L") + " Z");
+      })();
+
+      // ---- svg-path-draw setup: measured length per stroke ----
+      function prep(el, fallback) {
+        let len = 0;
+        try { len = el.getTotalLength(); } catch (e) { len = 0; }
+        if (!len || !isFinite(len)) len = fallback;
+        len = len * 1.02;
+        el.style.strokeDasharray = len + " " + len;
+        el.style.strokeDashoffset = String(len);
+        return len;
+      }
+
+      const tl = gsap.timeline({ paused: true });
+
+      // No camera move: the film's one camera move lives in frame 1; this shot holds a locked frame.
+
+      // ---- Scene 1 (0.0–2.6s): headline per-word on spoken words + empty outlines draw left→right ----
+      tl.fromTo("#fp03-stub", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 0.1);
+      // word starts from voice 03: Four 0.14 · pieces 0.42 · easy 1.27 · to 1.66 · confuse 1.85
+      const wordAt = [["#fp03-w1", 0.14], ["#fp03-w2", 0.42], ["#fp03-w3", 1.27], ["#fp03-w4", 1.66], ["#fp03-w5", 1.85]];
+      wordAt.forEach(([sel, t]) => {
+        tl.fromTo(sel, { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, t);
+      });
+
+      // Outlines are NOT pre-drawn: each card's outline draws on with its content at that card's cue.
+      const outlines = [1, 2, 3, 4].map((n) => $("#fp03-card" + n + " .fp03-outline path"));
+      const outlineLens = outlines.map((p) => prep(p, 2 * (358.5 + 438.5)));
+      tl.fromTo("#fp03-baseline", { scaleX: 0 }, { scaleX: 1, duration: 1.4, ease: "power3.out" }, 0.2);
+
+      // Hide per-card content until its cue (fromTo gates, seek-safe)
+      $$(".fp03-index, .fp03-icon, .fp03-name, .fp03-role, #fp03-r3b").forEach((el) => {
+        tl.set(el, { opacity: 0 }, 0);
+      });
+
+      // ---- per-card fill on its spoken cue ----
+      function fillCard(n, cue, roleCue) {
+        const card = "#fp03-card" + n;
+        const outline = outlines[n - 1];
+
+        // cyan outline draws on with the card, starting 0.1s before icon/name
+        const olen = outlineLens[n - 1];
+        tl.fromTo(outline, { strokeDashoffset: olen, stroke: CYAN, strokeOpacity: 1 },
+          { strokeDashoffset: 0, stroke: CYAN, strokeOpacity: 1, duration: 0.8, ease: "power3.out" }, cue - 0.1);
+
+        tl.fromTo(card + " .fp03-index", { opacity: 0, y: 10 },
+          { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, cue);
+
+        // icon self-draws (svg-path-draw, staggered ~30% of segment dur)
+        const icon = $("#fp03-icon" + n);
+        tl.fromTo(icon, { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "none" }, cue);
+        const parts = Array.from(icon.querySelectorAll("path, circle"));
+        const seg = 0.42;
+        parts.forEach((p, i) => {
+          const len = prep(p, 120);
+          tl.fromTo(p, { strokeDashoffset: len }, { strokeDashoffset: 0, duration: seg, ease: "power3.out" },
+            cue + i * seg * 0.3);
+        });
+
+        tl.fromTo(card + " .fp03-name", { opacity: 0, y: 28 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, cue + 0.15);
+
+        tl.fromTo(card + " .fp03-role", { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, roleCue);
+      }
+
+      // previous card settles to ink at the instant the next goes active
+      function settleCard(n, at) {
+        const outline = outlines[n - 1];
+        const icon = $("#fp03-icon" + n);
+        tl.fromTo(outline, { stroke: CYAN, strokeOpacity: 1 },
+          { stroke: MUTED, strokeOpacity: 0.85, duration: 0.35, ease: "power3.out", immediateRender: false }, at);
+        tl.fromTo(icon.querySelectorAll("path, circle"), { stroke: CYAN },
+          { stroke: CREAM, duration: 0.35, ease: "power3.out", immediateRender: false }, at);
+        tl.fromTo("#fp03-card" + n + " .fp03-index", { color: CYAN },
+          { color: MUTED, duration: 0.35, ease: "power3.out", immediateRender: false }, at);
+      }
+
+      // Scene 2 (2.6–4.5s): model@2.8, reasoning@3.7
+      fillCard(1, 2.8, 3.7);
+      // Scene 3 (4.5–6.3s): skill@4.7, playbook@5.4
+      settleCard(1, 4.7);
+      fillCard(2, 4.7, 5.4);
+      // Scene 4 (6.3–10.2s): MCP@6.4, "discover and call"@7.9, tools@9.2
+      settleCard(2, 6.4);
+      fillCard(3, 6.4, 7.9);
+      tl.fromTo("#fp03-r3b", { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 9.2);
+      // Scene 5 (10.2–12.18s): runtime@10.7, performs@11.3 — cyan stays on card 4, set holds still
+      settleCard(3, 10.7);
+      fillCard(4, 10.7, 11.3);
+
+      // pad the timeline to the fixed frame duration (no tween — the set simply holds)
+      tl.set({}, {}, DURATION);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["03-four-pieces"] = tl;
+    })();
+  </script>
+</template>

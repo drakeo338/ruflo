@@ -1,0 +1,387 @@
+<template id="01-one-answer-template" data-composition-id="01-one-answer" data-width="1920" data-height="1080" data-duration="10.307">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  @font-face { font-family: "Inter"; src: url("assets/fonts/Inter-Variable.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+  @font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/JetBrainsMono-Variable.woff2") format("woff2"); font-weight: 100 800; font-style: normal; font-display: block; }
+
+  #root {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    container-type: size;
+    font-family: "Inter", sans-serif;
+    color: #F7FBFF;
+  }
+  .one-answer-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: #030611;
+  }
+  /* camera stage — overflow hidden, no background on the world */
+  .one-answer-stage {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+  }
+  /* grid layer: screen-space mask — no tile above y=150 (chrome) or below y=860 (caption band) */
+  .one-answer-grid-stage { clip-path: inset(150px 0 220px 0); }
+  .one-answer-world {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    transform-origin: 0 0;
+  }
+  .one-answer-grid { position: absolute; inset: 0; }
+  .one-answer-tile {
+    position: absolute;
+    width: 156px;
+    height: 87px;
+    border: 1px solid #BDC9DF;
+    opacity: 0;
+  }
+  .one-answer-tile-bar {
+    position: absolute;
+    left: 10px;
+    height: 3px;
+    background: #BDC9DF;
+  }
+  /* the lone chat tile — the foreground subject */
+  .one-answer-chat {
+    position: absolute;
+    left: 796px;
+    top: 586px;
+    width: 156px;
+    height: 87px;
+    border: 1px solid rgba(189, 201, 223, 0);
+    background: #030611;
+  }
+  .one-answer-ring {
+    position: absolute;
+    left: -5px;
+    top: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 1px solid #68E4FF;
+    opacity: 0;
+  }
+  /* faint cyan tint (accent token at low opacity), painted under the chat content */
+  .one-answer-tint {
+    position: absolute;
+    inset: 0;
+    background: #68E4FF;
+    opacity: 0;
+  }
+  /* chat content authored at 4x and scaled to world size (avoids sub-6px font clamping) */
+  .one-answer-chat-inner {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 624px;
+    height: 348px;
+    transform: scale(0.25);
+    transform-origin: 0 0;
+  }
+  .one-answer-label {
+    position: absolute;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 500;
+    font-size: 12.4px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #BDC9DF;
+    white-space: nowrap;
+  }
+  .one-answer-q {
+    position: absolute;
+    right: 32px;
+    top: 90px;
+    padding: 12.8px 22px 14.4px;
+    background: #262828;
+    font-size: 22.4px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: #F7FBFF;
+    white-space: nowrap;
+  }
+  .one-answer-a {
+    position: absolute;
+    left: 32px;
+    top: 210px;
+    padding: 4px 0 4px 20px;
+    border-left: 4px solid #68E4FF;
+    font-size: 22.4px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: #F7FBFF;
+    white-space: nowrap;
+  }
+  .one-answer-line { display: block; height: 31.36px; }
+  .one-answer-caret {
+    display: inline-block;
+    width: 3.6px;
+    height: 24px;
+    margin-left: 2.4px;
+    vertical-align: -3.2px;
+    background: #68E4FF;
+  }
+
+  /* chrome + headline — outside the camera */
+  /* title-safe: inner 80% (x 192..1728, y 108..972) */
+  .one-answer-chrome {
+    position: absolute;
+    top: 108px;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 500;
+    font-size: 0.72cqw;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    z-index: 3;
+  }
+  .one-answer-kicker { left: 192px; color: #68E4FF; }
+  .one-answer-index { right: 192px; color: #BDC9DF; }
+  .one-answer-headline {
+    position: absolute;
+    left: 192px;
+    top: 190px;
+    z-index: 3;
+    font-family: "Inter", sans-serif;
+    font-weight: 900;
+    font-size: 4.5cqw;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-transform: lowercase;
+    color: #F7FBFF;
+    white-space: nowrap;
+  }
+  .one-answer-word { display: inline-block; margin-right: 0.24em; }
+  .one-answer-accent { color: #68E4FF; }
+</style>
+
+<div
+  id="root"
+  data-composition-id="01-one-answer"
+  data-start="0"
+  data-duration="10.307"
+  data-fps="30"
+  data-width="1920"
+  data-height="1080"
+>
+  <div class="one-answer-bg clip" id="one-answer-bg" data-start="0" data-duration="10.307" data-track-index="0"></div>
+
+  <div class="one-answer-stage one-answer-grid-stage">
+    <div class="one-answer-world" id="one-answer-grid-world">
+      <div class="one-answer-grid" id="one-answer-grid"></div>
+    </div>
+  </div>
+  <div class="one-answer-stage">
+    <div class="one-answer-world" id="one-answer-world">
+      <div class="one-answer-chat" id="one-answer-chat">
+        <div class="one-answer-ring" id="one-answer-ring"></div>
+        <div class="one-answer-tint" id="one-answer-tint"></div>
+        <div class="one-answer-chat-inner">
+          <div class="one-answer-label" style="right: 32px; top: 68px;">you</div>
+          <div class="one-answer-q">How do I add a safer login?</div>
+          <div class="one-answer-label" style="left: 32px; top: 188px;">assistant</div>
+          <div class="one-answer-a">
+            <span class="one-answer-line" id="one-answer-line-1"></span>
+            <span class="one-answer-line" id="one-answer-line-2"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="one-answer-chrome one-answer-kicker">RuFlo explained</div>
+  <div class="one-answer-chrome one-answer-index">01 / 09</div>
+
+  <div class="one-answer-headline" id="one-answer-headline">
+    <span class="one-answer-word">rarely</span><span class="one-answer-word">ends</span><span class="one-answer-word">with</span><span class="one-answer-word one-answer-accent">one</span><span class="one-answer-word one-answer-accent">answer</span>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var DURATION = 9.707;
+    var tl = gsap.timeline({ paused: true });
+
+    // ---------- world geometry (scale-1 wide = final layout) ----------
+    // ROWS = 4: a 5th row would land at y 792..879, inside the caption band (>860)
+    var COLS = 10, ROWS = 4, TW = 156, TH = 87, GAP = 16, X0 = 108, Y0 = 380;
+    var CHAT_COL = 4, CHAT_ROW = 2;
+    var CHAT_CX = X0 + CHAT_COL * (TW + GAP) + TW / 2; // 874
+    var CHAT_CY = Y0 + CHAT_ROW * (TH + GAP) + TH / 2; // 629.5
+    var FOCUS_X = 960, FOCUS_Y = 540; // screen point the close-up is framed on
+    var S0 = 7.5; // exchange fills ~55% of frame at open
+
+    // ---------- build the empty workspace grid ----------
+    var grid = document.getElementById("one-answer-grid");
+    var tiles = [];
+    for (var r = 0; r < ROWS; r++) {
+      for (var c = 0; c < COLS; c++) {
+        if (r === CHAT_ROW && c === CHAT_COL) continue;
+        var t = document.createElement("div");
+        t.className = "one-answer-tile";
+        t.style.left = X0 + c * (TW + GAP) + "px";
+        t.style.top = Y0 + r * (TH + GAP) + "px";
+        // empty task-tile skeleton: header bar + two faint lines
+        var widths = [34 + ((c * 7 + r * 13) % 24), 96 - ((c * 11 + r * 5) % 30), 58 + ((c * 3 + r * 17) % 36)];
+        var tops = [12, 58, 68];
+        for (var b = 0; b < 3; b++) {
+          var bar = document.createElement("div");
+          bar.className = "one-answer-tile-bar";
+          bar.style.top = tops[b] + "px";
+          bar.style.width = widths[b] + "px";
+          bar.style.opacity = b === 0 ? "0.9" : "0.45";
+          t.appendChild(bar);
+        }
+        grid.appendChild(t);
+        tiles.push({ el: t, c: c, r: r });
+      }
+    }
+
+    // ---------- answer text, typed per character ----------
+    var LINE1 = "Add two-step sign-in first,";
+    var LINE2 = "then rate-limit attempts.";
+    var PRE_TYPED = 7; // mid-type at frame 0 — "Add two" already on screen
+    function buildLine(id, text) {
+      var host = document.getElementById(id);
+      var chars = [];
+      for (var i = 0; i < text.length; i++) {
+        var s = document.createElement("span");
+        s.textContent = text[i];
+        s.style.display = "none";
+        host.appendChild(s);
+        chars.push(s);
+      }
+      var caret = document.createElement("span");
+      caret.className = "one-answer-caret";
+      caret.style.display = "none";
+      host.appendChild(caret);
+      return { chars: chars, caret: caret };
+    }
+    var l1 = buildLine("one-answer-line-1", LINE1);
+    var l2 = buildLine("one-answer-line-2", LINE2);
+
+    // Scene 1 — already mid-type at t=0
+    for (var i = 0; i < l1.chars.length; i++) {
+      var at1 = i < PRE_TYPED ? 0 : 0.1 + (i - PRE_TYPED) * 0.055;
+      tl.set(l1.chars[i], { display: "inline" }, at1);
+    }
+    tl.set(l1.caret, { display: "inline-block" }, 0);
+    var L2_AT = 1.45;
+    tl.set(l1.caret, { display: "none" }, L2_AT);
+    tl.set(l2.caret, { display: "inline-block" }, L2_AT);
+    for (var j = 0; j < l2.chars.length; j++) {
+      tl.set(l2.chars[j], { display: "inline" }, L2_AT + 0.05 + j * 0.05);
+    }
+    // caret blink after typing ends (discrete sets, no repeat)
+    var typedEnd = L2_AT + 0.05 + l2.chars.length * 0.05; // ~2.75
+    var on = false;
+    for (var k = typedEnd + 0.3; k < DURATION; k += 0.45) {
+      tl.set(l2.caret, { opacity: on ? 1 : 0 }, k);
+      on = !on;
+    }
+
+    // ---------- the ONE decelerating pull-back (camera) ----------
+    var world = document.getElementById("one-answer-world");
+    var gridWorld = document.getElementById("one-answer-grid-world");
+    var cam = { p: 0 };
+    var LN_S0 = Math.log(S0);
+    function writeCam() {
+      var p = cam.p;
+      var s = Math.exp(LN_S0 * (1 - p)); // log-space scale: perceptually even zoom
+      var px = FOCUS_X * (1 - p) + CHAT_CX * p; // chat drifts from frame-center to its home slot
+      var py = FOCUS_Y * (1 - p) + CHAT_CY * p;
+      var tx = px - s * CHAT_CX;
+      var ty = py - s * CHAT_CY;
+      var tf = "translate(" + tx + "px," + ty + "px) scale(" + s + ")";
+      world.style.transform = tf;
+      gridWorld.style.transform = tf; // grid rides the same camera in its masked layer
+    }
+    writeCam(); // frame 0 = tight on the exchange
+    var PULL_AT = 1.8, PULL_DUR = 4.9; // locks at 6.7 — before "But" (6.92)
+    tl.fromTo(cam, { p: 0 }, { p: 1, duration: PULL_DUR, ease: "power3.inOut", onUpdate: writeCam }, PULL_AT);
+
+    // "chat window" (2.2) — the exchange's window frame resolves
+    var chat = document.getElementById("one-answer-chat");
+    tl.fromTo(chat, { borderColor: "rgba(189,201,223,0)" }, { borderColor: "rgba(189,201,223,0.7)", duration: 0.8, ease: "power3.out" }, 2.2);
+
+    // ---------- Scene 2: grid resolves outward from the chat tile (center-outward-expansion) ----------
+    // ring 1 on "Ask" (3.2) · ring 4 ≈ "answer" (4.6) · ring 5 on "decide" (5.2); last lands ~6.42 < lock 6.7
+    // Each tile fades in at its own lattice slot with a short outward nudge. The nudge is
+    // capped below GAP (16px) so an in-flight tile never overlaps its inner neighbour —
+    // the old 35%-of-distance offset (up to ~300px) slid outer columns over inner ones,
+    // which read as a second misregistered layer of tiles.
+    var RING_AT = 3.2, RING_STEP = 0.5, EXPAND_DUR = 1.1, NUDGE = 12, TILE_OPACITY = 0.35;
+    tiles.forEach(function (tile) {
+      var ring = Math.max(Math.abs(tile.c - CHAT_COL), Math.abs(tile.r - CHAT_ROW));
+      var dx = (tile.c - CHAT_COL) * (TW + GAP);
+      var dy = (tile.r - CHAT_ROW) * (TH + GAP);
+      var angle = Math.atan2(dy, dx);
+      var at = RING_AT + (ring - 1) * RING_STEP + ((angle + Math.PI) / (2 * Math.PI)) * 0.12;
+      tl.fromTo(
+        tile.el,
+        // two channels only: translate (x/y) + opacity
+        { x: -Math.cos(angle) * NUDGE, y: -Math.sin(angle) * NUDGE, opacity: 0 },
+        { x: 0, y: 0, opacity: TILE_OPACITY, duration: EXPAND_DUR, ease: "power3.out" },
+        at
+      );
+    });
+
+    // ---------- Scene 3: locked wide — element payoff only ----------
+    // "But" (6.92): the empty workspace recedes a notch, isolating the lone tile
+    tl.fromTo(grid, { opacity: 1 }, { opacity: 0.7, duration: 0.7, ease: "power3.out" }, 6.92);
+
+    // per-word headline — schedule precomputed once from the voice cues
+    var WORD_CUES = [7.2, 7.65, 8.05, 8.3, 8.45]; // rarely · ends · with · one · answer (0.5s earlier)
+    var WORD_DUR = 0.45;
+    var words = document.querySelectorAll("#one-answer-headline .one-answer-word");
+    var SCHEDULE = WORD_CUES.map(function (cue, idx) {
+      return { el: words[idx], start: cue, end: cue + WORD_DUR };
+    });
+    SCHEDULE.forEach(function (w) {
+      tl.fromTo(
+        w.el,
+        { opacity: 0, yPercent: 55 },
+        { opacity: 1, yPercent: 0, duration: WORD_DUR, ease: "power3.out" },
+        w.start
+      );
+    });
+
+    // "one answer" (8.8): the lone chat tile glows faintly cyan
+    var ring = document.getElementById("one-answer-ring");
+    tl.fromTo(ring, { opacity: 0 }, { opacity: 0.75, duration: 0.6, ease: "power3.out" }, 8.8);
+    tl.fromTo("#one-answer-tint", { opacity: 0 }, { opacity: 0.08, duration: 0.6, ease: "power3.out" }, 8.8);
+
+    // subtle deterministic jitter on the headline only (hashed, 15 Hz)
+    var headline = document.getElementById("one-answer-headline");
+    function hash(n) { var x = Math.sin(n * 12.9898) * 43758.5453; return x - Math.floor(x); }
+    var jit = { t: 0 };
+    var JIT_AT = 7.2;
+    tl.fromTo(jit, { t: 0 }, {
+      t: DURATION - JIT_AT,
+      duration: DURATION - JIT_AT,
+      ease: "none",
+      onUpdate: function () {
+        var step = Math.floor(jit.t * 15);
+        var dx = (hash(step + 1) - 0.5) * 2.4;
+        var dy = (hash(step + 101) - 0.5) * 1.6;
+        headline.style.transform = "translate(" + dx.toFixed(2) + "px," + dy.toFixed(2) + "px)";
+      }
+    }, JIT_AT);
+
+    // full-span anchor
+    tl.to({}, { duration: DURATION }, 0);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines["01-one-answer"] = tl;
+  })();
+</script>
+</template>

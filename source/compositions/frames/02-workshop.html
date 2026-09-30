@@ -1,0 +1,253 @@
+<template id="f02-workshop-template">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+<style>
+  @font-face { font-family: "Inter"; src: url("assets/fonts/Inter-Variable.woff2") format("woff2"); font-weight: 100 900; font-style: normal; font-display: block; }
+  @font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/JetBrainsMono-Variable.woff2") format("woff2"); font-weight: 100 800; font-style: normal; font-display: block; }
+
+  #root {
+    --w02-ink: #030611;
+    --w02-cream: #F7FBFF;
+    --w02-cream-muted: #BDC9DF;
+    --w02-accent: #68E4FF;
+    --w02-gold: #FFCB6B;
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    container-type: size;
+    font-family: "Inter", sans-serif;
+    color: var(--w02-cream);
+  }
+
+  /* full-bleed ground: ink-black + dim hairline grid (background role) */
+  .f02-workshop-bg {
+    position: absolute; inset: 0;
+    background-color: var(--w02-ink);
+  }
+  .f02-workshop-grid {
+    position: absolute; inset: 0;
+    opacity: 0.08;
+    background-image:
+      repeating-linear-gradient(to right, var(--w02-cream-muted) 0 1px, transparent 1px 120px),
+      repeating-linear-gradient(to bottom, var(--w02-cream-muted) 0 1px, transparent 1px 120px);
+    background-position: 192px 0, 0 120px;
+  }
+
+  .f02-workshop-stage { position: absolute; inset: 0; }
+
+  /* ---- outgoing: the checklist (left 60% column) ---- */
+  .f02-workshop-list-wrap {
+    position: absolute; inset: 0;
+    transform-origin: 50% 50%;
+    z-index: 1;
+  }
+  .f02-workshop-cam { position: absolute; inset: 0; }
+  .f02-workshop-kicker {
+    position: absolute; left: 192px; top: 120px;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--w02-accent);
+    display: flex; align-items: center; gap: 18px;
+  }
+  .f02-workshop-stub { width: 36px; height: 2px; background: var(--w02-accent); display: inline-block; }
+  .f02-workshop-list {
+    position: absolute; left: 192px; top: 200px;
+    width: 960px;
+  }
+  .f02-workshop-row {
+    position: relative;
+    height: 128px;
+    display: flex; align-items: center;
+  }
+  .f02-workshop-idx {
+    width: 110px; flex: none;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 500;
+    font-size: 26px;
+    letter-spacing: 0.14em;
+    color: var(--w02-cream-muted);
+    padding-top: 8px;
+  }
+  .f02-workshop-label {
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    font-size: 78px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-transform: lowercase;
+    color: var(--w02-cream);
+  }
+  .f02-workshop-rule {
+    position: absolute; left: 0; bottom: 0;
+    width: 960px; height: 1px;
+    overflow: visible;
+  }
+  .f02-workshop-rule line {
+    fill: none;
+    stroke: var(--w02-cream-muted);
+    stroke-opacity: 0.3;
+    stroke-width: 1;
+    stroke-linecap: butt;
+  }
+
+  /* ---- incoming: centered title lockup ---- */
+  .f02-workshop-title-wrap {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding-bottom: 180px; /* optical center ~0.42H, clear of caption band */
+    transform-origin: 50% 50%;
+    z-index: 2;
+  }
+  .f02-workshop-lockup { display: flex; flex-direction: column; align-items: flex-start; }
+  .f02-workshop-title-kicker {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 500;
+    font-size: 26px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--w02-accent);
+    display: flex; align-items: center; gap: 18px;
+    margin-bottom: 40px;
+  }
+  .f02-workshop-title {
+    font-family: "Inter", sans-serif;
+    font-weight: 900;
+    font-size: 104px;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    text-transform: lowercase;
+    color: var(--w02-cream);
+    margin: 0;
+  }
+  .f02-workshop-line { display: block; white-space: nowrap; }
+  .f02-workshop-w { display: inline-block; }
+  .f02-workshop-gold { color: var(--w02-gold); }
+</style>
+
+<div id="root" data-composition-id="02-workshop" data-width="1920" data-height="1080" data-duration="9.972">
+
+<!-- track 0: full-bleed ground -->
+<div class="clip f02-workshop-bg" id="f02-workshop-bg" data-start="0" data-duration="9.972" data-track-index="0">
+  <div class="f02-workshop-grid"></div>
+</div>
+
+<!-- track 1: the shot -->
+<div class="clip f02-workshop-stage" id="f02-workshop-stage" data-start="0" data-duration="9.972" data-track-index="1">
+
+  <div class="f02-workshop-list-wrap" id="f02-workshop-list-wrap">
+    <div class="f02-workshop-cam" id="f02-workshop-cam">
+      <div class="f02-workshop-kicker" id="f02-workshop-kicker"><span class="f02-workshop-stub"></span>A FEATURE NEEDS</div>
+      <div class="f02-workshop-list">
+        <div class="f02-workshop-row" id="f02-workshop-row-0">
+          <span class="f02-workshop-idx" id="f02-workshop-idx-0">01</span><span class="f02-workshop-label">research</span>
+          <svg class="f02-workshop-rule" viewBox="0 0 960 1" preserveAspectRatio="none"><line id="f02-workshop-rule-0" x1="0" y1="0.5" x2="960" y2="0.5"/></svg>
+        </div>
+        <div class="f02-workshop-row" id="f02-workshop-row-1">
+          <span class="f02-workshop-idx" id="f02-workshop-idx-1">02</span><span class="f02-workshop-label">code</span>
+          <svg class="f02-workshop-rule" viewBox="0 0 960 1" preserveAspectRatio="none"><line id="f02-workshop-rule-1" x1="0" y1="0.5" x2="960" y2="0.5"/></svg>
+        </div>
+        <div class="f02-workshop-row" id="f02-workshop-row-2">
+          <span class="f02-workshop-idx" id="f02-workshop-idx-2">03</span><span class="f02-workshop-label">tests</span>
+          <svg class="f02-workshop-rule" viewBox="0 0 960 1" preserveAspectRatio="none"><line id="f02-workshop-rule-2" x1="0" y1="0.5" x2="960" y2="0.5"/></svg>
+        </div>
+        <div class="f02-workshop-row" id="f02-workshop-row-3">
+          <span class="f02-workshop-idx" id="f02-workshop-idx-3">04</span><span class="f02-workshop-label">review</span>
+          <svg class="f02-workshop-rule" viewBox="0 0 960 1" preserveAspectRatio="none"><line id="f02-workshop-rule-3" x1="0" y1="0.5" x2="960" y2="0.5"/></svg>
+        </div>
+        <div class="f02-workshop-row" id="f02-workshop-row-4">
+          <span class="f02-workshop-idx" id="f02-workshop-idx-4">05</span><span class="f02-workshop-label">decisions</span>
+          <svg class="f02-workshop-rule" viewBox="0 0 960 1" preserveAspectRatio="none"><line id="f02-workshop-rule-4" x1="0" y1="0.5" x2="960" y2="0.5"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="f02-workshop-title-wrap" id="f02-workshop-title-wrap">
+    <div class="f02-workshop-lockup">
+      <div class="f02-workshop-title-kicker" id="f02-workshop-title-kicker"><span class="f02-workshop-stub" id="f02-workshop-title-stub"></span>RUFLO</div>
+      <h1 class="f02-workshop-title">
+        <span class="f02-workshop-line"><span class="f02-workshop-w" id="f02-workshop-w-a">a</span> <span class="f02-workshop-w f02-workshop-gold" id="f02-workshop-w-workshop">workshop,</span></span>
+        <span class="f02-workshop-line"><span class="f02-workshop-w" id="f02-workshop-w-not">not</span> <span class="f02-workshop-w" id="f02-workshop-w-another">another</span> <span class="f02-workshop-w" id="f02-workshop-w-chatbot">chatbot.</span></span>
+      </h1>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+(function () {
+  window.__timelines = window.__timelines || {};
+  var FID = "02-workshop";
+  var PFX = "f02-workshop-";
+  var DUR = 9.472;
+  var $ = function (k) { return document.getElementById(PFX + k); };
+  var ACCENT = "#68E4FF", MUTED = "#BDC9DF";
+  var tl = gsap.timeline({ paused: true });
+
+  // ---- dynamic-content-sequencing: content array reduced ONCE into a flat TIMELINE.
+  // Starts are the spoken-word cues; each entry ends where the next begins.
+  var CONTENT = [
+    { key: "01", cue: 1.0 },  // research
+    { key: "02", cue: 1.8 },  // code
+    { key: "03", cue: 2.3 },  // tests
+    { key: "04", cue: 3.2 },  // review
+    { key: "05", cue: 4.9 }   // decisions
+  ];
+  var LIST_END = 5.65;        // swap trigger (Scene 3 opens)
+  var TIMELINE = CONTENT.map(function (e, i) {
+    return { key: e.key, i: i, start: e.cue, end: i < CONTENT.length - 1 ? CONTENT[i + 1].cue : LIST_END };
+  });
+
+  // ---- Scene 1 (0.0–1.0): only the mono label sets top-left
+  tl.fromTo($("kicker"), { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 0.1);
+
+  // svg-path-draw setup: measured length (fallback to authored geometry)
+  var ROW_ENTER = 0.75, DRAW = 0.6;
+  TIMELINE.forEach(function (e) {
+    var line = $("rule-" + e.i);
+    var len = 960;
+    try { var m = line.getTotalLength(); if (m > 0) len = m; } catch (err) {}
+    line.style.strokeDasharray = len + "";
+    line.style.strokeDashoffset = len + "";
+
+    // ---- Scene 2: each row lands ON its spoken word — long-tail slide-up + fade
+    tl.fromTo($("row-" + e.i), { opacity: 0, y: 46 }, { opacity: 1, y: 0, duration: ROW_ENTER, ease: "power3.out" }, e.start);
+    // hairline draws left→right, pen ease, a beat behind the row
+    tl.to(line, { strokeDashoffset: 0, duration: DRAW, ease: "power2.out" }, e.start + 0.08);
+    // mono index lights cyan as it lands, then settles to cream-muted
+    tl.fromTo($("idx-" + e.i), { color: ACCENT }, { color: MUTED, duration: 0.5, ease: "power1.out" }, Math.min(e.start + 0.55, e.end - 0.05));
+  });
+
+  // ---- Scene 3: scale-swap-transition — list compresses up-and-out, title arrives at the same center
+  // (outgoing: scale+opacity on the wrap, the "up" on the inner cam layer — ≤2 props per element)
+  var TRIGGER = LIST_END, EXIT_DUR = 0.4, ENTER_DUR = 0.62, OVERLAP = 0.15, EXIT_SCALE = 0.72;
+  var IN_AT = TRIGGER + EXIT_DUR - OVERLAP; // ≈5.9 — on "So"
+  tl.to($("list-wrap"), { scale: EXIT_SCALE, opacity: 0, duration: EXIT_DUR, ease: "power2.in" }, TRIGGER);
+  tl.to($("cam"), { y: -60, duration: EXIT_DUR, ease: "power2.in" }, TRIGGER);
+  // incoming settles with a decisive expo.out — no overshoot (film motion grammar bans back.out)
+  tl.fromTo($("title-wrap"), { scale: EXIT_SCALE, opacity: 0 }, { scale: 1, opacity: 1, duration: ENTER_DUR, ease: "expo.out" }, IN_AT);
+
+  // inner content reveals after the container settles
+  // the RUFLO kicker rides IN the container; its stub draws as it settles, text brightens on "RuFlo" @6.4
+  tl.fromTo($("title-stub"), { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, IN_AT + 0.2);
+  tl.fromTo($("title-kicker"), { opacity: 0.55 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 6.4);
+  // "a" leads by a hair, "workshop," — the frame's one gold word — lands on "workshop" @7.1
+  tl.fromTo($("w-a"), { opacity: 0, yPercent: 35 }, { opacity: 1, yPercent: 0, duration: 0.55, ease: "power3.out" }, 6.95);
+  tl.fromTo($("w-workshop"), { opacity: 0, yPercent: 35 }, { opacity: 1, yPercent: 0, duration: 0.6, ease: "expo.out" }, 7.1);
+  // "not another chatbot." per-word from @7.8
+  [["w-not", 7.8], ["w-another", 8.02], ["w-chatbot", 8.26]].forEach(function (p) {
+    tl.fromTo($(p[0]), { opacity: 0, yPercent: 35 }, { opacity: 1, yPercent: 0, duration: 0.55, ease: "power3.out" }, p[1]);
+  });
+
+  // hold still to the end — pad the timeline to the fixed duration
+  tl.set({}, {}, DUR);
+
+  window.__timelines[FID] = tl;
+})();
+</script>
+</template>

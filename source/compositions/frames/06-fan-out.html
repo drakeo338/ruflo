@@ -1,0 +1,328 @@
+<template>
+<div id="root" data-composition-id="06-fan-out" data-width="1920" data-height="1080" data-duration="13.791">
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-Variable.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "JetBrains Mono";
+      src: url("assets/fonts/JetBrainsMono-Variable.woff2") format("woff2");
+      font-weight: 100 800;
+      font-style: normal;
+    }
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: "Inter", sans-serif;
+      color: #F7FBFF;
+    }
+    .f06-bg {
+      position: absolute;
+      inset: 0;
+      background: #030611;
+    }
+    .f06-grid {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      opacity: 0.25;
+    }
+    .f06-stage {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 45%;
+    }
+    .f06-wires {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: visible;
+    }
+    .f06-wires path {
+      fill: none;
+      stroke: #BDC9DF;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .f06-wires path.f06-accent-wire {
+      stroke: #68E4FF;
+    }
+    .f06-node {
+      position: absolute;
+      box-sizing: border-box;
+      border: 1px solid #262828;
+      background: #181A1A;
+      padding: 18px 24px 0 24px;
+    }
+    .f06-idx {
+      display: block;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      font-size: 0.72cqw;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #68E4FF;
+    }
+    .f06-name {
+      display: block;
+      margin-top: 6px;
+      font-family: "Inter", sans-serif;
+      font-weight: 700;
+      font-size: 2.8cqw;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      text-transform: lowercase;
+      white-space: nowrap;
+      color: #F7FBFF;
+    }
+    /* diagram spans x 336–~1585 (incl. "next session" label), centred on 960 */
+    #f06-plan { left: 336px; top: 394px; width: 232px; height: 120px; }
+    .f06-lane { width: 280px; height: 124px; left: 710px; }
+    #f06-lane-research { top: 212px; }
+    #f06-lane-build { top: 392px; }
+    #f06-lane-test { top: 572px; }
+    .f06-track {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 14px;
+      height: 2px;
+      background: #262828;
+      overflow: hidden;
+    }
+    .f06-fill {
+      width: 100%;
+      height: 100%;
+      background: #68E4FF;
+      transform-origin: left center;
+    }
+    /* review lands already in the cyan register (ink-on-fire) on "single review" */
+    #f06-review { left: 1132px; top: 394px; width: 232px; height: 120px; background: #68E4FF; border-color: #68E4FF; }
+    #f06-review .f06-idx { color: #030611; }
+    #f06-review .f06-name { color: #030611; }
+    /* ghosted placeholders: dim cream-muted outlines holding the right half from 0s */
+    #f06-review-ghost {
+      left: 1132px; top: 394px; width: 232px; height: 120px;
+      background: transparent;
+      border: 2px solid #BDC9DF;
+      opacity: 0.2;
+    }
+    #f06-review-ghost .f06-idx,
+    #f06-review-ghost .f06-name { color: #BDC9DF; }
+    #f06-memory-ghost { opacity: 0.2; }
+    #f06-memory-ghost .f06-disc { fill: none; }
+    .f06-memory {
+      position: absolute;
+      left: 1183px;
+      top: 668px;
+      width: 130px;
+      height: 150px;
+    }
+    .f06-memory svg { width: 130px; height: 120px; overflow: visible; }
+    .f06-disc {
+      fill: #181A1A;
+      stroke: #BDC9DF;
+      stroke-width: 2;
+    }
+    .f06-tick {
+      transform-box: fill-box;
+      transform-origin: left center;
+      fill: #68E4FF;
+    }
+    .f06-mem-label {
+      position: absolute;
+      left: 0;
+      width: 130px;
+      top: 128px;
+      text-align: center;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      font-size: 0.72cqw;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #BDC9DF;
+    }
+    .f06-next {
+      position: absolute;
+      left: 1344px;
+      top: 730px;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      font-size: 1.05cqw;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #68E4FF;
+      white-space: nowrap;
+    }
+  </style>
+
+  <!-- background: ink ground + faint dot grid -->
+  <div class="clip f06-bg" id="f06-bg" data-start="0" data-duration="13.791" data-track-index="0">
+    <svg class="f06-grid" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="f06-dots" width="48" height="48" patternUnits="userSpaceOnUse">
+          <circle cx="24" cy="24" r="1.6" fill="#BDC9DF"></circle>
+        </pattern>
+      </defs>
+      <rect x="0" y="0" width="1920" height="1080" fill="url(#f06-dots)"></rect>
+    </svg>
+  </div>
+
+  <!-- foreground stage -->
+  <div class="clip f06-stage" id="f06-stage" data-start="0" data-duration="13.791" data-track-index="1">
+    <svg class="f06-wires" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+      <!-- fan-out: plan right edge (568,454) -> lane left edges (710, y) -->
+      <path id="f06-w-out-1" d="M 568 454 C 639 454, 639 274, 710 274"></path>
+      <path id="f06-w-out-2" d="M 568 454 C 639 454, 639 454, 710 454"></path>
+      <path id="f06-w-out-3" d="M 568 454 C 639 454, 639 634, 710 634"></path>
+      <!-- converge: lane right edges (990, y) -> review left edge (1132,454) -->
+      <path id="f06-w-in-1" d="M 990 274 C 1061 274, 1061 454, 1132 454"></path>
+      <path id="f06-w-in-2" d="M 990 454 C 1061 454, 1061 454, 1132 454"></path>
+      <path id="f06-w-in-3" d="M 990 634 C 1061 634, 1061 454, 1132 454"></path>
+      <!-- review bottom (1248,514) -> memory top disc (1248,680) -->
+      <path id="f06-w-mem" class="f06-accent-wire" d="M 1248 514 L 1248 680"></path>
+    </svg>
+
+    <!-- ghosted review + memory positions, dim from 0s; hand off to the real nodes on cue -->
+    <div class="f06-node" id="f06-review-ghost">
+      <span class="f06-idx">03</span>
+      <span class="f06-name">review</span>
+    </div>
+    <div class="f06-memory" id="f06-memory-ghost">
+      <svg viewBox="0 0 130 120" xmlns="http://www.w3.org/2000/svg">
+        <ellipse class="f06-disc" cx="65" cy="96" rx="58" ry="16"></ellipse>
+        <ellipse class="f06-disc" cx="65" cy="62" rx="58" ry="16"></ellipse>
+        <ellipse class="f06-disc" cx="65" cy="28" rx="58" ry="16"></ellipse>
+      </svg>
+      <div class="f06-mem-label">04 · Memory</div>
+    </div>
+
+    <div class="f06-node" id="f06-plan">
+      <span class="f06-idx">01</span>
+      <span class="f06-name">plan</span>
+    </div>
+
+    <div class="f06-node f06-lane" id="f06-lane-research">
+      <span class="f06-idx">02 · A</span>
+      <span class="f06-name">research</span>
+      <div class="f06-track"><div class="f06-fill" id="f06-fill-research"></div></div>
+    </div>
+    <div class="f06-node f06-lane" id="f06-lane-build">
+      <span class="f06-idx">02 · B</span>
+      <span class="f06-name">build</span>
+      <div class="f06-track"><div class="f06-fill" id="f06-fill-build"></div></div>
+    </div>
+    <div class="f06-node f06-lane" id="f06-lane-test">
+      <span class="f06-idx">02 · C</span>
+      <span class="f06-name">test</span>
+      <div class="f06-track"><div class="f06-fill" id="f06-fill-test"></div></div>
+    </div>
+
+    <div class="f06-node" id="f06-review">
+      <span class="f06-idx" id="f06-review-idx">03</span>
+      <span class="f06-name" id="f06-review-name">review</span>
+    </div>
+
+    <div class="f06-memory" id="f06-memory">
+      <svg viewBox="0 0 130 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- stacked-disc store, drawn bottom-up so upper discs overlap lower -->
+        <ellipse class="f06-disc" cx="65" cy="96" rx="58" ry="16"></ellipse>
+        <ellipse class="f06-disc" cx="65" cy="62" rx="58" ry="16"></ellipse>
+        <ellipse class="f06-disc" cx="65" cy="28" rx="58" ry="16"></ellipse>
+        <rect class="f06-tick" id="f06-tick-1" x="46" y="26" width="38" height="4"></rect>
+        <rect class="f06-tick" id="f06-tick-2" x="46" y="60" width="38" height="4"></rect>
+        <rect class="f06-tick" id="f06-tick-3" x="46" y="94" width="38" height="4"></rect>
+      </svg>
+      <div class="f06-mem-label">04 · Memory</div>
+    </div>
+
+    <div class="f06-next" id="f06-next">next session →</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "06-fan-out";
+      var DUR = 13.291;
+      var scope = document.querySelector('[data-composition-id="' + FID + '"]') || document;
+      var q = function (sel) { return scope.querySelector(sel); };
+
+      // Measure every connector once (svg-path-draw) — hidden until drawn.
+      var wires = {};
+      ["f06-w-out-1", "f06-w-out-2", "f06-w-out-3", "f06-w-in-1", "f06-w-in-2", "f06-w-in-3", "f06-w-mem"].forEach(function (id) {
+        var p = q("#" + id);
+        var len = p.getTotalLength() * 1.02;
+        // gap padded and start offset nudged past 0 so the round cap leaves no stray dot before the draw.
+        p.style.strokeDasharray = len + " " + (len + 20);
+        wires[id] = { el: p, len: len };
+      });
+      function draw(id, at, dur, ease) {
+        tl.fromTo(wires[id].el,
+          { strokeDashoffset: wires[id].len + 4 },
+          { strokeDashoffset: 0, duration: dur, ease: ease }, at);
+      }
+      function land(sel, at) {
+        tl.fromTo(q(sel),
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, at);
+      }
+
+      var tl = gsap.timeline({ paused: true });
+
+      // Macro camera: gentle push-in that SETTLES before the midpoint — no back-half drift.
+      tl.fromTo(q("#f06-stage"), { scale: 1.0 }, { scale: 1.035, duration: 6.5, ease: "power3.out" }, 0);
+
+      // Scene 1 (0.0–1.4): plan sets on the left on "Plan a task"@0.1.
+      land("#f06-plan", 0.1);
+
+      // Scene 2 (1.4–5.9): fan out — three connectors branch from plan on "fan it out"@1.4.
+      draw("f06-w-out-1", 1.4, 0.8, "power2.out");
+      draw("f06-w-out-2", 1.52, 0.8, "power2.out");
+      draw("f06-w-out-3", 1.64, 0.8, "power2.out");
+      land("#f06-lane-research", 2.5);
+      land("#f06-lane-build", 3.6);
+      land("#f06-lane-test", 4.2);
+      // "parallel"@4.9: all three progress hairlines fill at once (stat-bars-and-fills, bar form), 100% by 5.9.
+      tl.fromTo([q("#f06-fill-research"), q("#f06-fill-build"), q("#f06-fill-test")],
+        { scaleX: 0 },
+        { scaleX: 1, duration: 1.0, ease: "power3.out" }, 4.9);
+
+      // Scene 3 (5.9–10.2): "coordinator"@6.1 — connectors converge across the phrase,
+      // tips arriving as review lands on "single review"@8.9.
+      draw("f06-w-in-1", 6.1, 2.75, "power2.inOut");
+      draw("f06-w-in-2", 6.1, 2.75, "power2.inOut");
+      draw("f06-w-in-3", 6.1, 2.75, "power2.inOut");
+      land("#f06-review", 8.9);
+      // ghost outline hands off to the cyan node as it lands.
+      tl.fromTo(q("#f06-review-ghost"), { opacity: 0.2 }, { opacity: 0, duration: 0.35, ease: "power1.out", immediateRender: false }, 8.9);
+
+      // Scene 4 (10.2–13.29): "important findings"@10.5 — connector drops to memory.
+      draw("f06-w-mem", 10.5, 0.45, "power2.out");
+      tl.fromTo(q("#f06-memory"), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 10.5);
+      tl.fromTo(q("#f06-memory-ghost"), { opacity: 0.2 }, { opacity: 0, duration: 0.35, ease: "power1.out", immediateRender: false }, 10.5);
+      // "next session" label lands just ahead of "retained"@11.7 (by 11.3) and holds ~2s.
+      tl.fromTo(q("#f06-next"), { opacity: 0, x: -12 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 10.9);
+      // "retained"@11.7: three findings ticks fill the discs.
+      tl.fromTo([q("#f06-tick-1"), q("#f06-tick-2"), q("#f06-tick-3")],
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.35, ease: "power3.out", stagger: 0.12 }, 11.7);
+
+      // Pin the timeline length to the frame duration.
+      tl.set({}, {}, DUR);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</div>
+</template>

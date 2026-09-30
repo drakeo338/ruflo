@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RuFlo Explained</title>
+<meta name="description" content="RuFlo Explained — an animated explainer: build an AI team that plans, remembers, tests, and improves. A workshop, not another chatbot.">
+<meta property="og:title" content="RuFlo Explained">
+<meta property="og:description" content="A workshop, not another chatbot — an animated explainer of RuFlo.">
+<meta property="og:type" content="video.other">
+<meta property="og:image" content="https://ruvnet.github.io/ruflo/media/poster.jpg">
+<meta property="og:image:width" content="1920">
+<meta property="og:image:height" content="1080">
+<meta property="og:url" content="https://ruvnet.github.io/ruflo/">
+<link rel="canonical" href="https://ruvnet.github.io/ruflo/">
+<meta name="twitter:image" content="https://ruvnet.github.io/ruflo/media/poster.jpg">
+<meta property="og:video" content="https://ruvnet.github.io/ruflo/media/ruflo-explained.mp4">
+<meta property="og:video:type" content="video/mp4">
+<meta property="og:video:width" content="1920">
+<meta property="og:video:height" content="1080">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 29 9.5v13L16 30 3 22.5v-13z' fill='none' stroke='%2368E4FF' stroke-width='3'/%3E%3C/svg%3E">
+<style>
+  @font-face { font-family: "Inter"; src: url("source/assets/fonts/Inter-Variable.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+  @font-face { font-family: "JetBrains Mono"; src: url("source/assets/fonts/JetBrainsMono-Variable.woff2") format("woff2"); font-weight: 100 800; font-display: swap; }
+  :root {
+    --canvas: #030611; --ink: #F7FBFF; --muted: #BDC9DF; --accent: #68E4FF; --gold: #FFCB6B;
+    --hair: rgba(189, 201, 223, 0.18); --panel: #07101f;
+  }
+  :root[data-theme="light"] { --canvas: #F7FBFF; --ink: #030611; --muted: #3c4a61; --accent: #0b7c93; --gold: #8a5a00; --hair: rgba(3, 6, 17, 0.14); --panel: #eef3fa; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--canvas); color: var(--ink); }
+  body { font-family: "Inter", system-ui, sans-serif; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 32px 16px 64px; }
+  .kicker { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 10px; }
+  .kicker::before { content: ""; width: 28px; height: 1px; background: var(--accent); }
+  h1 { font-weight: 900; font-size: clamp(34px, 6vw, 64px); line-height: 1.02; letter-spacing: -0.02em; margin: 14px 0 10px; text-transform: lowercase; }
+  h1 em { font-style: normal; color: var(--gold); }
+  .lede { color: var(--muted); font-size: clamp(16px, 2.2vw, 19px); max-width: 720px; margin: 0 0 28px; }
+  .player { position: relative; border: 1px solid var(--hair); background: #000; aspect-ratio: 16 / 9; width: 100%; }
+  .player video { width: 100%; height: 100%; display: block; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 36px; }
+  .chip { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: 0.08em; border: 1px solid var(--hair); padding: 6px 10px; color: var(--muted); text-decoration: none; }
+  a.chip:hover, a.chip:focus-visible { color: var(--accent); border-color: var(--accent); outline: none; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--hair); border: 1px solid var(--hair); }
+  @media (min-width: 760px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  .cell { background: var(--canvas); padding: 20px; }
+  .cell h2 { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; font-weight: 500; }
+  .cell p, .cell li { color: var(--muted); font-size: 15px; margin: 0; }
+  .cell ul { margin: 0; padding-left: 18px; }
+  code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.92em; background: var(--panel); padding: 2px 6px; border: 1px solid var(--hair); overflow-wrap: anywhere; }
+  footer { margin-top: 40px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; color: var(--muted); letter-spacing: 0.04em; }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">RuFlo Explained</div>
+  <h1>a <em>workshop</em>, not another chatbot.</h1>
+  <p class="lede">An animated explainer of RuFlo: how it helps an AI assistant plan, remember, test, and improve — based on the guide <a href="https://github.com/ruvnet/ruflo/blob/main/docs/ruflo-explained.md" style="color:var(--accent)">RuFlo Explained</a> by rUv Cohen.</p>
+
+  <div class="player">
+    <video controls playsinline preload="metadata" poster="media/poster.jpg">
+      <source src="media/ruflo-explained.mp4" type="video/mp4">
+      <track kind="captions" src="media/captions.vtt" srclang="en" label="English">
+      Your browser cannot play this video. <a href="media/ruflo-explained.mp4">Download the MP4</a>.
+    </video>
+  </div>
+
+  <div class="meta">
+    <a class="chip" href="media/ruflo-explained.mp4" download>Download MP4</a>
+    <a class="chip" href="media/captions.vtt">Captions (WebVTT)</a>
+    <a class="chip" href="https://github.com/ruvnet/ruflo">github.com/ruvnet/ruflo</a>
+    <a class="chip" href="https://github.com/ruvnet/ruflo/tree/gh-pages/source">Composition source</a>
+    <a class="chip" href="media/receipt.acceptance.json">Acceptance receipt</a>
+  </div>
+
+  <div class="grid">
+    <div class="cell">
+      <h2>Start small</h2>
+      <p>Install the RuFlo skill, pick one project and one acceptance test. If your assistant supports the Skills installer:</p>
+      <p style="margin-top:10px"><code>npx skills add ruvnet/ruflo --skill ruflo</code></p>
+    </div>
+    <div class="cell">
+      <h2>In the film</h2>
+      <ul>
+        <li>A workshop, not another chatbot</li>
+        <li>Model · Skill · MCP · Runtime</li>
+        <li>Fan out, converge on review</li>
+        <li>Cost per accepted result</li>
+        <li>“Done” is not a test result</li>
+      </ul>
+    </div>
+    <div class="cell">
+      <h2>How it was made</h2>
+      <p>Composed in HTML with HyperFrames and rendered deterministically. Narration is synthetic (Kokoro TTS); music was generated locally (MusicGen). Chapter illustrations are from the original article and were AI-generated.</p>
+    </div>
+  </div>
+
+  <footer>
+    By rUv Cohen · Cognitum.One — synthetic narration · illustrations AI-generated. Source article: <a href="https://github.com/ruvnet/ruflo/blob/main/docs/ruflo-explained.md">docs/ruflo-explained.md</a>.
+  </footer>
+</div>
+<script>
+  try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+</body>
+</html>

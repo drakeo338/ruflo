@@ -1,0 +1,130 @@
+WEBVTT
+
+1
+00:00:00.040 --> 00:00:03.120
+Most people meet AI through a chat window.
+
+2
+00:00:03.160 --> 00:00:06.880
+Ask a question, get an
+answer, decide what's next.
+
+3
+00:00:06.920 --> 00:00:09.707
+But real work rarely ends with one answer.
+
+4
+00:00:09.740 --> 00:00:12.866
+A feature needs research, code, tests,
+
+5
+00:00:12.867 --> 00:00:15.467
+a review, and a record of the decisions.
+
+6
+00:00:15.550 --> 00:00:19.067
+So think of RuFlo as a
+workshop, not another chatbot.
+
+7
+00:00:19.319 --> 00:00:21.779
+Four pieces are easy to confuse.
+
+8
+00:00:21.919 --> 00:00:23.738
+The model does the reasoning.
+
+9
+00:00:23.739 --> 00:00:25.429
+A skill is a playbook.
+
+10
+00:00:25.619 --> 00:00:29.299
+MCP lets an assistant
+discover and call tools.
+
+11
+00:00:29.439 --> 00:00:31.422
+And the runtime performs the work.
+
+12
+00:00:31.423 --> 00:00:35.720
+“I installed the skill,” and
+“the MCP server is connected”
+
+13
+00:00:35.740 --> 00:00:37.286
+are two different statements.
+
+14
+00:00:37.287 --> 00:00:40.466
+RuFlo helps you plan and coordinate work,
+
+15
+00:00:40.467 --> 00:00:43.507
+keep project memory,
+learn from what worked,
+
+16
+00:00:43.557 --> 00:00:46.197
+build repeatable workflows, test software,
+
+17
+00:00:46.367 --> 00:00:47.779
+and add security checks.
+
+18
+00:00:47.846 --> 00:00:50.206
+Plan a task, then fan it out.
+
+19
+00:00:50.286 --> 00:00:53.606
+Research, build, and test in parallel.
+
+20
+00:00:53.686 --> 00:00:57.886
+One coordinator resolves the
+findings into a single review,
+
+21
+00:00:57.966 --> 00:01:01.116
+and the important findings are
+retained for the next session.
+
+22
+00:01:01.117 --> 00:01:03.937
+More agents are not automatically cheaper.
+
+23
+00:01:03.997 --> 00:01:06.198
+Measure cost per accepted result.
+
+24
+00:01:06.298 --> 00:01:09.638
+And an agent saying “done”
+is not a test result.
+
+25
+00:01:09.958 --> 00:01:12.058
+Verify tool discovery, permissions,
+
+26
+00:01:12.228 --> 00:01:13.814
+and the actual output.
+
+27
+00:01:13.874 --> 00:01:16.974
+Start small, install the RuFlo skill,
+
+28
+00:01:17.024 --> 00:01:19.924
+pick one project and one acceptance test.
+
+29
+00:01:20.144 --> 00:01:21.443
+Add the next capability
+
+30
+00:01:21.444 --> 00:01:24.091
+only when you can name
+the problem it solves.

@@ -1,0 +1,299 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-Variable.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "JetBrains Mono";
+      src: url("assets/fonts/JetBrainsMono-Variable.woff2") format("woff2");
+      font-weight: 100 800;
+      font-style: normal;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      color: #f7fbff;
+      font-family: "Inter", sans-serif;
+    }
+    .c05-bg {
+      position: absolute;
+      inset: 0;
+      background: #030611;
+    }
+    .c05-stage {
+      position: absolute;
+      inset: 0;
+    }
+    .c05-rings,
+    .c05-lines,
+    .c05-hub-svg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      pointer-events: none;
+    }
+    .c05-rings { z-index: 0; }
+    .c05-lines { z-index: 1; }
+    .c05-hub-svg { z-index: 5; }
+    .c05-rings ellipse {
+      fill: none;
+      stroke: #bdc9df;
+      stroke-width: 1;
+    }
+    .c05-lines line {
+      stroke: #68e4ff;
+      stroke-width: 2;
+      stroke-linecap: round;
+    }
+    .c05-hex {
+      fill: none;
+      stroke: #f7fbff;
+      stroke-width: 3;
+      stroke-linejoin: round;
+    }
+    .c05-hub-label {
+      position: absolute;
+      z-index: 6;
+      left: 860px;
+      top: 434px;
+      width: 200px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 600;
+      font-size: 30px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #f7fbff;
+      padding-left: 0.14em;
+    }
+    .c05-dot {
+      position: absolute;
+      z-index: 2;
+      width: 12px;
+      height: 12px;
+      margin-left: -6px;
+      margin-top: -6px;
+      border-radius: 50%;
+      background: #bdc9df;
+    }
+    .c05-node {
+      position: absolute;
+      z-index: 3;
+      width: 80px;
+      height: 80px;
+      margin-left: -40px;
+      margin-top: -40px;
+      border-radius: 50%;
+      border: 3px solid #68e4ff;
+      background: #030611;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      font-size: 18px;
+      letter-spacing: 0.14em;
+      padding-left: 0.14em;
+      color: #68e4ff;
+    }
+    .c05-label {
+      position: absolute;
+      z-index: 4;
+      height: 60px;
+      margin-top: -32px;
+      line-height: 60px;
+      white-space: nowrap;
+      font-family: "Inter", sans-serif;
+      font-weight: 800;
+      font-size: 54px;
+      letter-spacing: -0.03em;
+      text-transform: lowercase;
+      color: #f7fbff;
+    }
+    .c05-label.c05-left {
+      text-align: right;
+      width: 400px;
+      margin-left: -464px;
+    }
+    .c05-label.c05-right {
+      text-align: left;
+      width: 400px;
+      margin-left: 64px;
+    }
+  </style>
+
+  <div id="root" data-composition-id="05-capabilities" data-width="1920" data-height="1080" data-duration="11.139">
+    <div class="clip c05-bg" id="c05-bg" data-start="0" data-duration="11.139" data-track-index="0"></div>
+
+    <div class="c05-stage" id="c05-stage">
+      <!-- background: faint concentric hairline rings -->
+      <svg class="c05-rings" id="c05-rings" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+        <ellipse id="c05-ring-1" cx="960" cy="454" rx="190" ry="130" />
+        <ellipse id="c05-ring-2" cx="960" cy="454" rx="275" ry="187" />
+        <ellipse id="c05-ring-3" cx="960" cy="454" rx="360" ry="245" />
+      </svg>
+
+      <!-- supporting: connectors hub -> node (coords set in script from one center) -->
+      <svg class="c05-lines" id="c05-lines" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+        <line id="c05-line-0" />
+        <line id="c05-line-1" />
+        <line id="c05-line-2" />
+        <line id="c05-line-3" />
+        <line id="c05-line-4" />
+        <line id="c05-line-5" />
+      </svg>
+
+      <!-- node placeholders, nodes, labels (positions set in script) -->
+      <div class="c05-dot" id="c05-dot-0"></div>
+      <div class="c05-dot" id="c05-dot-1"></div>
+      <div class="c05-dot" id="c05-dot-2"></div>
+      <div class="c05-dot" id="c05-dot-3"></div>
+      <div class="c05-dot" id="c05-dot-4"></div>
+      <div class="c05-dot" id="c05-dot-5"></div>
+
+      <div class="c05-node" id="c05-node-0">01</div>
+      <div class="c05-node" id="c05-node-1">02</div>
+      <div class="c05-node" id="c05-node-2">03</div>
+      <div class="c05-node" id="c05-node-3">04</div>
+      <div class="c05-node" id="c05-node-4">05</div>
+      <div class="c05-node" id="c05-node-5">06</div>
+
+      <div class="c05-label c05-right" id="c05-label-0">plan</div>
+      <div class="c05-label c05-right" id="c05-label-1">memory</div>
+      <div class="c05-label c05-right" id="c05-label-2">learn</div>
+      <div class="c05-label c05-right" id="c05-label-3">workflows</div>
+      <div class="c05-label c05-left" id="c05-label-4">test</div>
+      <div class="c05-label c05-left" id="c05-label-5">security</div>
+
+      <!-- foreground subject: the hub -->
+      <svg class="c05-hub-svg" id="c05-hub-svg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+        <path class="c05-hex" id="c05-hex" d="M 960 334 L 1063.92 394 L 1063.92 514 L 960 574 L 856.08 514 L 856.08 394 Z" />
+      </svg>
+      <div class="c05-hub-label" id="c05-hub-label">RuFlo</div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      window.__timelines = window.__timelines || {};
+      var CYAN = "#68E4FF";
+      var CREAM = "#F7FBFF";
+      var MUTED = "#BDC9DF";
+
+      // One shared center — the hub's rendered center.
+      var C = { x: 960, y: 454 };
+      var RX = 440;
+      var RY = 300;
+      var HUB_GAP = 132; // line starts just outside the hexagon edge
+      var NODE_GAP = 46; // line ends just outside the node ring
+      var N = 6;
+      // spoken order, clockwise from 12 o'clock
+      var CUES = [1.2, 4.0, 4.7, 7.3, 8.1, 9.5];
+      var RESOLVE = 10.0;
+
+      var q = function (id) { return document.getElementById(id); };
+
+      var pts = [];
+      for (var i = 0; i < N; i++) {
+        var a = (i / N) * Math.PI * 2 - Math.PI / 2;
+        var x = C.x + Math.cos(a) * RX;
+        var y = C.y + Math.sin(a) * RY;
+        pts.push({ x: x, y: y });
+
+        var dot = q("c05-dot-" + i);
+        dot.style.left = x + "px";
+        dot.style.top = y + "px";
+        var node = q("c05-node-" + i);
+        node.style.left = x + "px";
+        node.style.top = y + "px";
+        var label = q("c05-label-" + i);
+        label.style.left = x + "px";
+        label.style.top = y + "px";
+
+        var dx = x - C.x;
+        var dy = y - C.y;
+        var d = Math.hypot(dx, dy);
+        var ux = dx / d;
+        var uy = dy / d;
+        var line = q("c05-line-" + i);
+        line.setAttribute("x1", String(C.x + ux * HUB_GAP));
+        line.setAttribute("y1", String(C.y + uy * HUB_GAP));
+        line.setAttribute("x2", String(x - ux * NODE_GAP));
+        line.setAttribute("y2", String(y - uy * NODE_GAP));
+        var len = d - HUB_GAP - NODE_GAP;
+        line.style.strokeDasharray = String(len);
+        line.style.strokeDashoffset = String(len);
+      }
+
+      var hex = q("c05-hex");
+      var hexLen = hex.getTotalLength() * 1.02;
+      hex.style.strokeDasharray = String(hexLen);
+      hex.style.strokeDashoffset = String(hexLen);
+
+      var tl = gsap.timeline({ paused: true });
+
+      // ── Scene 1 (0.0–1.2s): hub self-draws, rings resolve, dim node positions ──
+      tl.fromTo(hex, { strokeDashoffset: hexLen }, { strokeDashoffset: 0, duration: 0.8, ease: "power2.out" }, 0.1);
+      tl.fromTo("#c05-hub-label", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.45, ease: "power1.out" }, 0.3);
+      tl.fromTo(
+        ["#c05-ring-1", "#c05-ring-2", "#c05-ring-3"],
+        { opacity: 0 },
+        { opacity: 0.25, duration: 0.7, ease: "power1.out", stagger: 0.12 },
+        0.2
+      );
+      for (var k = 0; k < N; k++) {
+        tl.fromTo("#c05-dot-" + k, { opacity: 0, scale: 0 }, { opacity: 0.55, scale: 1, duration: 0.35, ease: "power2.out" }, 0.55 + k * 0.07);
+      }
+
+      // ── Scene 2 (1.2–10.0s): each capability lights on its spoken word ──
+      for (var j = 0; j < N; j++) {
+        var t = CUES[j];
+        var line = "#c05-line-" + j;
+        var node = "#c05-node-" + j;
+        var label = "#c05-label-" + j;
+        var isLeft = j >= 4;
+        var lineLen = parseFloat(q("c05-line-" + j).style.strokeDasharray);
+
+        // connector draws FROM hub TO node
+        tl.fromTo(line, { strokeDashoffset: lineLen }, { strokeDashoffset: 0, duration: 0.4, ease: "power2.inOut" }, t);
+        // node lands cyan as the line arrives
+        tl.fromTo(node, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: "power3.out" }, t + 0.1);
+        tl.fromTo("#c05-dot-" + j, { opacity: 0.55 }, { opacity: 0, duration: 0.2, ease: "power1.out", immediateRender: false }, t + 0.1);
+        // label sets beside it
+        tl.fromTo(
+          label,
+          { opacity: 0, x: isLeft ? 24 : -24 },
+          { opacity: 1, x: 0, duration: 0.45, ease: "power3.out" },
+          t + 0.15
+        );
+
+        // settle to ink (cream foreground) when the next one lights (only the newest stays cyan)
+        var settleAt = j < N - 1 ? CUES[j + 1] + 0.1 : RESOLVE;
+        tl.to(node, { borderColor: CREAM, color: CREAM, duration: 0.35, ease: "power1.out" }, settleAt);
+        tl.to(line, { stroke: MUTED, opacity: 0.45, duration: 0.35, ease: "power1.out" }, settleAt);
+      }
+
+      // ── Scene 3 (10.0–10.54s): resolve on the core — hub turns cyan, hold ──
+      tl.to(hex, { stroke: CYAN, duration: 0.3, ease: "power1.out" }, RESOLVE);
+      tl.to("#c05-hub-label", { color: CYAN, duration: 0.3, ease: "power1.out" }, RESOLVE);
+
+      // pin exact length
+      tl.set({}, {}, 10.539);
+
+      window.__timelines["05-capabilities"] = tl;
+    })();
+  </script>
+</template>

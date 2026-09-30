@@ -1,0 +1,1337 @@
+{
+  "bgm": {
+    "path": "assets/bgm/track_ext.wav",
+    "volume": 0.12,
+    "query": "calm minimal electronic ambient underscore",
+    "duration_s": 91.075
+  },
+  "bgm_pending": false,
+  "voices": [
+    {
+      "frame": 1,
+      "path": "assets/voice/01.wav",
+      "duration_s": 9.707,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Most",
+          "start": 0.04,
+          "end": 0.35
+        },
+        {
+          "id": "w1",
+          "text": "people",
+          "start": 0.38,
+          "end": 0.89
+        },
+        {
+          "id": "w2",
+          "text": "meet",
+          "start": 1.04,
+          "end": 1.26
+        },
+        {
+          "id": "w3",
+          "text": "AI",
+          "start": 1.26,
+          "end": 1.44
+        },
+        {
+          "id": "w4",
+          "text": "through",
+          "start": 1.44,
+          "end": 2.07
+        },
+        {
+          "id": "w5",
+          "text": "a",
+          "start": 2.07,
+          "end": 2.16
+        },
+        {
+          "id": "w6",
+          "text": "chat",
+          "start": 2.16,
+          "end": 2.51
+        },
+        {
+          "id": "w7",
+          "text": "window.",
+          "start": 2.51,
+          "end": 3.12
+        },
+        {
+          "id": "w8",
+          "text": "Ask",
+          "start": 3.16,
+          "end": 3.35
+        },
+        {
+          "id": "w9",
+          "text": "a",
+          "start": 3.2929999999999997,
+          "end": 3.36
+        },
+        {
+          "id": "w10",
+          "text": "question,",
+          "start": 3.45,
+          "end": 4.2
+        },
+        {
+          "id": "w11",
+          "text": "get",
+          "start": 4.2,
+          "end": 4.43
+        },
+        {
+          "id": "w12",
+          "text": "an",
+          "start": 4.43,
+          "end": 4.58
+        },
+        {
+          "id": "w13",
+          "text": "answer,",
+          "start": 4.58,
+          "end": 5.2
+        },
+        {
+          "id": "w14",
+          "text": "decide",
+          "start": 5.2,
+          "end": 5.68
+        },
+        {
+          "id": "w15",
+          "text": "what's",
+          "start": 6.24,
+          "end": 6.44
+        },
+        {
+          "id": "w16",
+          "text": "next.",
+          "start": 6.44,
+          "end": 6.88
+        },
+        {
+          "id": "w17",
+          "text": "But",
+          "start": 6.92,
+          "end": 7.11
+        },
+        {
+          "id": "w18",
+          "text": "real",
+          "start": 7.11,
+          "end": 7.41
+        },
+        {
+          "id": "w19",
+          "text": "work",
+          "start": 7.42,
+          "end": 7.73
+        },
+        {
+          "id": "w20",
+          "text": "rarely",
+          "start": 7.73,
+          "end": 8.2
+        },
+        {
+          "id": "w21",
+          "text": "ends",
+          "start": 8.2,
+          "end": 8.5
+        },
+        {
+          "id": "w22",
+          "text": "with",
+          "start": 8.6,
+          "end": 8.82
+        },
+        {
+          "id": "w23",
+          "text": "one",
+          "start": 8.82,
+          "end": 9.05
+        },
+        {
+          "id": "w24",
+          "text": "answer.",
+          "start": 9.05,
+          "end": 9.707
+        }
+      ]
+    },
+    {
+      "frame": 2,
+      "path": "assets/voice/02.wav",
+      "duration_s": 9.472,
+      "words": [
+        {
+          "id": "w0",
+          "text": "A",
+          "start": 0.033,
+          "end": 0.1
+        },
+        {
+          "id": "w1",
+          "text": "feature",
+          "start": 0.1,
+          "end": 0.61
+        },
+        {
+          "id": "w2",
+          "text": "needs",
+          "start": 0.61,
+          "end": 0.99
+        },
+        {
+          "id": "w3",
+          "text": "research,",
+          "start": 0.99,
+          "end": 1.75
+        },
+        {
+          "id": "w4",
+          "text": "code,",
+          "start": 1.76,
+          "end": 2.18
+        },
+        {
+          "id": "w5",
+          "text": "tests,",
+          "start": 2.27,
+          "end": 3.16
+        },
+        {
+          "id": "w6",
+          "text": "a",
+          "start": 3.16,
+          "end": 3.24
+        },
+        {
+          "id": "w7",
+          "text": "review,",
+          "start": 3.24,
+          "end": 3.86
+        },
+        {
+          "id": "w8",
+          "text": "and",
+          "start": 3.86,
+          "end": 4.02
+        },
+        {
+          "id": "w9",
+          "text": "a",
+          "start": 4.003,
+          "end": 4.07
+        },
+        {
+          "id": "w10",
+          "text": "record",
+          "start": 4.07,
+          "end": 4.4
+        },
+        {
+          "id": "w11",
+          "text": "of",
+          "start": 4.4,
+          "end": 4.58
+        },
+        {
+          "id": "w12",
+          "text": "the",
+          "start": 4.58,
+          "end": 4.86
+        },
+        {
+          "id": "w13",
+          "text": "decisions.",
+          "start": 4.86,
+          "end": 5.76
+        },
+        {
+          "id": "w14",
+          "text": "So",
+          "start": 5.843,
+          "end": 5.91
+        },
+        {
+          "id": "w15",
+          "text": "think",
+          "start": 5.91,
+          "end": 6.28
+        },
+        {
+          "id": "w16",
+          "text": "of",
+          "start": 6.28,
+          "end": 6.43
+        },
+        {
+          "id": "w17",
+          "text": "RuFlo",
+          "start": 6.43,
+          "end": 6.87
+        },
+        {
+          "id": "w18",
+          "text": "as",
+          "start": 6.87,
+          "end": 7.02
+        },
+        {
+          "id": "w19",
+          "text": "a",
+          "start": 7.02,
+          "end": 7.09
+        },
+        {
+          "id": "w20",
+          "text": "workshop,",
+          "start": 7.09,
+          "end": 7.82
+        },
+        {
+          "id": "w21",
+          "text": "not",
+          "start": 7.82,
+          "end": 7.94
+        },
+        {
+          "id": "w22",
+          "text": "another",
+          "start": 8.03,
+          "end": 8.52
+        },
+        {
+          "id": "w23",
+          "text": "chatbot.",
+          "start": 8.85,
+          "end": 9.36
+        }
+      ]
+    },
+    {
+      "frame": 3,
+      "path": "assets/voice/03.wav",
+      "duration_s": 12.181,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Four",
+          "start": 0.14,
+          "end": 0.34
+        },
+        {
+          "id": "w1",
+          "text": "pieces",
+          "start": 0.42,
+          "end": 0.95
+        },
+        {
+          "id": "w2",
+          "text": "are",
+          "start": 1.08,
+          "end": 1.27
+        },
+        {
+          "id": "w3",
+          "text": "easy",
+          "start": 1.27,
+          "end": 1.66
+        },
+        {
+          "id": "w4",
+          "text": "to",
+          "start": 1.66,
+          "end": 1.85
+        },
+        {
+          "id": "w5",
+          "text": "confuse.",
+          "start": 1.85,
+          "end": 2.6
+        },
+        {
+          "id": "w6",
+          "text": "The",
+          "start": 2.74,
+          "end": 2.81
+        },
+        {
+          "id": "w7",
+          "text": "model",
+          "start": 2.81,
+          "end": 3.17
+        },
+        {
+          "id": "w8",
+          "text": "does",
+          "start": 3.17,
+          "end": 3.46
+        },
+        {
+          "id": "w9",
+          "text": "the",
+          "start": 3.46,
+          "end": 3.55
+        },
+        {
+          "id": "w10",
+          "text": "reasoning.",
+          "start": 3.68,
+          "end": 4.56
+        },
+        {
+          "id": "w11",
+          "text": "A",
+          "start": 4.56,
+          "end": 4.7
+        },
+        {
+          "id": "w12",
+          "text": "skill",
+          "start": 4.7,
+          "end": 5.09
+        },
+        {
+          "id": "w13",
+          "text": "is",
+          "start": 5.09,
+          "end": 5.27
+        },
+        {
+          "id": "w14",
+          "text": "a",
+          "start": 5.27,
+          "end": 5.36
+        },
+        {
+          "id": "w15",
+          "text": "playbook.",
+          "start": 5.36,
+          "end": 6.25
+        },
+        {
+          "id": "w16",
+          "text": "MCP",
+          "start": 6.44,
+          "end": 6.61
+        },
+        {
+          "id": "w17",
+          "text": "lets",
+          "start": 6.61,
+          "end": 6.96
+        },
+        {
+          "id": "w18",
+          "text": "an",
+          "start": 6.96,
+          "end": 7.13
+        },
+        {
+          "id": "w19",
+          "text": "assistant",
+          "start": 7.13,
+          "end": 7.91
+        },
+        {
+          "id": "w20",
+          "text": "discover",
+          "start": 7.94,
+          "end": 8.62
+        },
+        {
+          "id": "w21",
+          "text": "and",
+          "start": 8.62,
+          "end": 9.01
+        },
+        {
+          "id": "w22",
+          "text": "call",
+          "start": 9.01,
+          "end": 9.16
+        },
+        {
+          "id": "w23",
+          "text": "tools.",
+          "start": 9.16,
+          "end": 10.12
+        },
+        {
+          "id": "w24",
+          "text": "And",
+          "start": 10.26,
+          "end": 10.39
+        },
+        {
+          "id": "w25",
+          "text": "the",
+          "start": 10.39,
+          "end": 10.66
+        },
+        {
+          "id": "w26",
+          "text": "runtime",
+          "start": 10.66,
+          "end": 11.3
+        },
+        {
+          "id": "w27",
+          "text": "performs",
+          "start": 11.3,
+          "end": 12.03
+        },
+        {
+          "id": "w28",
+          "text": "the",
+          "start": 12.03,
+          "end": 12.181
+        },
+        {
+          "id": "w29",
+          "text": "work.",
+          "start": 12.113999999999999,
+          "end": 12.181
+        }
+      ]
+    },
+    {
+      "frame": 4,
+      "path": "assets/voice/04.wav",
+      "duration_s": 5.867,
+      "words": [
+        {
+          "id": "w0",
+          "text": "\u201cI",
+          "start": 0.063,
+          "end": 0.13
+        },
+        {
+          "id": "w1",
+          "text": "installed",
+          "start": 0.13,
+          "end": 0.92
+        },
+        {
+          "id": "w2",
+          "text": "the",
+          "start": 0.92,
+          "end": 1.2
+        },
+        {
+          "id": "w3",
+          "text": "skill,\u201d",
+          "start": 1.2,
+          "end": 1.87
+        },
+        {
+          "id": "w4",
+          "text": "and",
+          "start": 1.87,
+          "end": 2.09
+        },
+        {
+          "id": "w5",
+          "text": "\u201cthe",
+          "start": 2.17,
+          "end": 2.44
+        },
+        {
+          "id": "w6",
+          "text": "MCP",
+          "start": 2.44,
+          "end": 2.69
+        },
+        {
+          "id": "w7",
+          "text": "server",
+          "start": 2.75,
+          "end": 3.34
+        },
+        {
+          "id": "w8",
+          "text": "is",
+          "start": 3.34,
+          "end": 3.45
+        },
+        {
+          "id": "w9",
+          "text": "connected\u201d",
+          "start": 3.5,
+          "end": 4.01
+        },
+        {
+          "id": "w10",
+          "text": "are",
+          "start": 4.38,
+          "end": 4.51
+        },
+        {
+          "id": "w11",
+          "text": "two",
+          "start": 4.57,
+          "end": 4.76
+        },
+        {
+          "id": "w12",
+          "text": "different",
+          "start": 4.76,
+          "end": 5.21
+        },
+        {
+          "id": "w13",
+          "text": "statements.",
+          "start": 5.27,
+          "end": 5.76
+        }
+      ]
+    },
+    {
+      "frame": 5,
+      "path": "assets/voice/05.wav",
+      "duration_s": 10.539,
+      "words": [
+        {
+          "id": "w0",
+          "text": "RuFlo",
+          "start": 0.06,
+          "end": 0.52
+        },
+        {
+          "id": "w1",
+          "text": "helps",
+          "start": 0.52,
+          "end": 0.91
+        },
+        {
+          "id": "w2",
+          "text": "you",
+          "start": 0.97,
+          "end": 1.17
+        },
+        {
+          "id": "w3",
+          "text": "plan",
+          "start": 1.24,
+          "end": 1.57
+        },
+        {
+          "id": "w4",
+          "text": "and",
+          "start": 1.57,
+          "end": 1.79
+        },
+        {
+          "id": "w5",
+          "text": "coordinate",
+          "start": 1.83,
+          "end": 2.54
+        },
+        {
+          "id": "w6",
+          "text": "work,",
+          "start": 3.12,
+          "end": 3.24
+        },
+        {
+          "id": "w7",
+          "text": "keep",
+          "start": 3.24,
+          "end": 3.49
+        },
+        {
+          "id": "w8",
+          "text": "project",
+          "start": 3.49,
+          "end": 3.96
+        },
+        {
+          "id": "w9",
+          "text": "memory,",
+          "start": 3.96,
+          "end": 4.64
+        },
+        {
+          "id": "w10",
+          "text": "learn",
+          "start": 4.7,
+          "end": 4.97
+        },
+        {
+          "id": "w11",
+          "text": "from",
+          "start": 4.97,
+          "end": 5.24
+        },
+        {
+          "id": "w12",
+          "text": "what",
+          "start": 5.24,
+          "end": 5.41
+        },
+        {
+          "id": "w13",
+          "text": "worked,",
+          "start": 5.44,
+          "end": 6.28
+        },
+        {
+          "id": "w14",
+          "text": "build",
+          "start": 6.33,
+          "end": 6.61
+        },
+        {
+          "id": "w15",
+          "text": "repeatable",
+          "start": 6.7,
+          "end": 7.32
+        },
+        {
+          "id": "w16",
+          "text": "workflows,",
+          "start": 7.32,
+          "end": 8.07
+        },
+        {
+          "id": "w17",
+          "text": "test",
+          "start": 8.07,
+          "end": 8.35
+        },
+        {
+          "id": "w18",
+          "text": "software,",
+          "start": 8.35,
+          "end": 8.97
+        },
+        {
+          "id": "w19",
+          "text": "and",
+          "start": 9.14,
+          "end": 9.24
+        },
+        {
+          "id": "w20",
+          "text": "add",
+          "start": 9.383,
+          "end": 9.45
+        },
+        {
+          "id": "w21",
+          "text": "security",
+          "start": 9.46,
+          "end": 10
+        },
+        {
+          "id": "w22",
+          "text": "checks.",
+          "start": 10,
+          "end": 10.48
+        }
+      ]
+    },
+    {
+      "frame": 6,
+      "path": "assets/voice/06.wav",
+      "duration_s": 13.291,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Plan",
+          "start": 0.08,
+          "end": 0.33
+        },
+        {
+          "id": "w1",
+          "text": "a",
+          "start": 0.383,
+          "end": 0.45
+        },
+        {
+          "id": "w2",
+          "text": "task,",
+          "start": 0.45,
+          "end": 0.87
+        },
+        {
+          "id": "w3",
+          "text": "then",
+          "start": 1.13,
+          "end": 1.3
+        },
+        {
+          "id": "w4",
+          "text": "fan",
+          "start": 1.4,
+          "end": 1.66
+        },
+        {
+          "id": "w5",
+          "text": "it",
+          "start": 1.66,
+          "end": 1.84
+        },
+        {
+          "id": "w6",
+          "text": "out.",
+          "start": 1.84,
+          "end": 2.44
+        },
+        {
+          "id": "w7",
+          "text": "Research,",
+          "start": 2.52,
+          "end": 3.25
+        },
+        {
+          "id": "w8",
+          "text": "build,",
+          "start": 3.56,
+          "end": 3.98
+        },
+        {
+          "id": "w9",
+          "text": "and",
+          "start": 3.98,
+          "end": 4.25
+        },
+        {
+          "id": "w10",
+          "text": "test",
+          "start": 4.25,
+          "end": 4.37
+        },
+        {
+          "id": "w11",
+          "text": "in",
+          "start": 4.69,
+          "end": 4.79
+        },
+        {
+          "id": "w12",
+          "text": "parallel.",
+          "start": 4.9,
+          "end": 5.84
+        },
+        {
+          "id": "w13",
+          "text": "One",
+          "start": 5.92,
+          "end": 6.07
+        },
+        {
+          "id": "w14",
+          "text": "coordinator",
+          "start": 6.07,
+          "end": 6.64
+        },
+        {
+          "id": "w15",
+          "text": "resolves",
+          "start": 6.97,
+          "end": 7.54
+        },
+        {
+          "id": "w16",
+          "text": "the",
+          "start": 7.54,
+          "end": 7.7
+        },
+        {
+          "id": "w17",
+          "text": "findings",
+          "start": 8.29,
+          "end": 8.4
+        },
+        {
+          "id": "w18",
+          "text": "into",
+          "start": 8.4,
+          "end": 8.75
+        },
+        {
+          "id": "w19",
+          "text": "a",
+          "start": 8.82,
+          "end": 8.9
+        },
+        {
+          "id": "w20",
+          "text": "single",
+          "start": 8.9,
+          "end": 9.49
+        },
+        {
+          "id": "w21",
+          "text": "review,",
+          "start": 9.5,
+          "end": 10.12
+        },
+        {
+          "id": "w22",
+          "text": "and",
+          "start": 10.2,
+          "end": 10.3
+        },
+        {
+          "id": "w23",
+          "text": "the",
+          "start": 10.3,
+          "end": 10.44
+        },
+        {
+          "id": "w24",
+          "text": "important",
+          "start": 10.52,
+          "end": 10.92
+        },
+        {
+          "id": "w25",
+          "text": "findings",
+          "start": 11.24,
+          "end": 11.44
+        },
+        {
+          "id": "w26",
+          "text": "are",
+          "start": 11.52,
+          "end": 11.69
+        },
+        {
+          "id": "w27",
+          "text": "retained",
+          "start": 11.69,
+          "end": 11.98
+        },
+        {
+          "id": "w28",
+          "text": "for",
+          "start": 11.98,
+          "end": 12.59
+        },
+        {
+          "id": "w29",
+          "text": "the",
+          "start": 12.59,
+          "end": 12.82
+        },
+        {
+          "id": "w30",
+          "text": "next",
+          "start": 12.82,
+          "end": 13.19
+        },
+        {
+          "id": "w31",
+          "text": "session.",
+          "start": 13.224,
+          "end": 13.291
+        }
+      ]
+    },
+    {
+      "frame": 7,
+      "path": "assets/voice/07.wav",
+      "duration_s": 5.141,
+      "words": [
+        {
+          "id": "w0",
+          "text": "More",
+          "start": 0.06,
+          "end": 0.31
+        },
+        {
+          "id": "w1",
+          "text": "agents",
+          "start": 0.31,
+          "end": 0.77
+        },
+        {
+          "id": "w2",
+          "text": "are",
+          "start": 0.77,
+          "end": 1
+        },
+        {
+          "id": "w3",
+          "text": "not",
+          "start": 1,
+          "end": 1.23
+        },
+        {
+          "id": "w4",
+          "text": "automatically",
+          "start": 1.23,
+          "end": 2.19
+        },
+        {
+          "id": "w5",
+          "text": "cheaper.",
+          "start": 2.27,
+          "end": 2.88
+        },
+        {
+          "id": "w6",
+          "text": "Measure",
+          "start": 2.94,
+          "end": 3.41
+        },
+        {
+          "id": "w7",
+          "text": "cost",
+          "start": 3.41,
+          "end": 3.71
+        },
+        {
+          "id": "w8",
+          "text": "per",
+          "start": 3.71,
+          "end": 3.91
+        },
+        {
+          "id": "w9",
+          "text": "accepted",
+          "start": 4.04,
+          "end": 4.55
+        },
+        {
+          "id": "w10",
+          "text": "result.",
+          "start": 4.55,
+          "end": 5.141
+        }
+      ]
+    },
+    {
+      "frame": 8,
+      "path": "assets/voice/08.wav",
+      "duration_s": 7.616,
+      "words": [
+        {
+          "id": "w0",
+          "text": "And an",
+          "start": 0.1,
+          "end": 0.19
+        },
+        {
+          "id": "w1",
+          "text": "agent",
+          "start": 0.19,
+          "end": 0.66
+        },
+        {
+          "id": "w2",
+          "text": "saying",
+          "start": 0.66,
+          "end": 1.22
+        },
+        {
+          "id": "w3",
+          "text": "\u201cdone\u201d",
+          "start": 1.22,
+          "end": 1.57
+        },
+        {
+          "id": "w4",
+          "text": "is",
+          "start": 1.58,
+          "end": 1.67
+        },
+        {
+          "id": "w5",
+          "text": "not",
+          "start": 1.89,
+          "end": 2.06
+        },
+        {
+          "id": "w6",
+          "text": "a",
+          "start": 2.06,
+          "end": 2.15
+        },
+        {
+          "id": "w7",
+          "text": "test",
+          "start": 2.15,
+          "end": 2.56
+        },
+        {
+          "id": "w8",
+          "text": "result.",
+          "start": 2.56,
+          "end": 3.44
+        },
+        {
+          "id": "w9",
+          "text": "Verify",
+          "start": 3.76,
+          "end": 4.01
+        },
+        {
+          "id": "w10",
+          "text": "tool",
+          "start": 4.11,
+          "end": 4.56
+        },
+        {
+          "id": "w11",
+          "text": "discovery,",
+          "start": 4.56,
+          "end": 5
+        },
+        {
+          "id": "w12",
+          "text": "permissions,",
+          "start": 5,
+          "end": 5.86
+        },
+        {
+          "id": "w13",
+          "text": "and",
+          "start": 6.03,
+          "end": 6.48
+        },
+        {
+          "id": "w14",
+          "text": "the",
+          "start": 6.51,
+          "end": 7.1
+        },
+        {
+          "id": "w15",
+          "text": "actual",
+          "start": 7.1,
+          "end": 7.616
+        },
+        {
+          "id": "w16",
+          "text": "output.",
+          "start": 7.5489999999999995,
+          "end": 7.616
+        }
+      ]
+    },
+    {
+      "frame": 9,
+      "path": "assets/voice/09.wav",
+      "duration_s": 10.261,
+      "words": [
+        {
+          "id": "w0",
+          "text": "Start",
+          "start": 0.06,
+          "end": 0.44
+        },
+        {
+          "id": "w1",
+          "text": "small,",
+          "start": 0.47,
+          "end": 1.08
+        },
+        {
+          "id": "w2",
+          "text": "install",
+          "start": 1.35,
+          "end": 1.71
+        },
+        {
+          "id": "w3",
+          "text": "the",
+          "start": 1.71,
+          "end": 1.97
+        },
+        {
+          "id": "w4",
+          "text": "RuFlo",
+          "start": 1.97,
+          "end": 2.65
+        },
+        {
+          "id": "w6",
+          "text": "skill,",
+          "start": 2.71,
+          "end": 3.16
+        },
+        {
+          "id": "w7",
+          "text": "pick",
+          "start": 3.21,
+          "end": 3.44
+        },
+        {
+          "id": "w8",
+          "text": "one",
+          "start": 3.5,
+          "end": 3.74
+        },
+        {
+          "id": "w9",
+          "text": "project",
+          "start": 3.74,
+          "end": 3.91
+        },
+        {
+          "id": "w10",
+          "text": "and",
+          "start": 4.5,
+          "end": 4.57
+        },
+        {
+          "id": "w11",
+          "text": "one",
+          "start": 4.57,
+          "end": 4.82
+        },
+        {
+          "id": "w12",
+          "text": "acceptance",
+          "start": 4.82,
+          "end": 5.66
+        },
+        {
+          "id": "w13",
+          "text": "test.",
+          "start": 5.66,
+          "end": 6.11
+        },
+        {
+          "id": "w14",
+          "text": "Add",
+          "start": 6.33,
+          "end": 6.47
+        },
+        {
+          "id": "w15",
+          "text": "the",
+          "start": 6.47,
+          "end": 6.66
+        },
+        {
+          "id": "w16",
+          "text": "next",
+          "start": 6.66,
+          "end": 6.92
+        },
+        {
+          "id": "w17",
+          "text": "capability",
+          "start": 6.92,
+          "end": 7.03
+        },
+        {
+          "id": "w18",
+          "text": "only",
+          "start": 7.63,
+          "end": 8.08
+        },
+        {
+          "id": "w19",
+          "text": "when",
+          "start": 8.08,
+          "end": 8.24
+        },
+        {
+          "id": "w20",
+          "text": "you",
+          "start": 8.24,
+          "end": 8.38
+        },
+        {
+          "id": "w21",
+          "text": "can",
+          "start": 8.38,
+          "end": 8.55
+        },
+        {
+          "id": "w22",
+          "text": "name",
+          "start": 8.64,
+          "end": 8.84
+        },
+        {
+          "id": "w23",
+          "text": "the",
+          "start": 8.89,
+          "end": 9.06
+        },
+        {
+          "id": "w24",
+          "text": "problem",
+          "start": 9.06,
+          "end": 9.57
+        },
+        {
+          "id": "w25",
+          "text": "it",
+          "start": 9.523,
+          "end": 9.59
+        },
+        {
+          "id": "w26",
+          "text": "solves.",
+          "start": 10.14,
+          "end": 10.261
+        }
+      ]
+    }
+  ],
+  "sfx": [
+    {
+      "frame": 1,
+      "file": "assets/sfx/click-soft.mp3",
+      "offset_s": 0,
+      "duration_s": 0.37,
+      "volume": 0.35
+    },
+    {
+      "frame": 3,
+      "file": "assets/sfx/click-soft.mp3",
+      "offset_s": 0,
+      "duration_s": 0.37,
+      "volume": 0.35
+    },
+    {
+      "frame": 5,
+      "file": "assets/sfx/click-soft.mp3",
+      "offset_s": 0,
+      "duration_s": 0.37,
+      "volume": 0.35
+    },
+    {
+      "frame": 6,
+      "file": "assets/sfx/whoosh-short.mp3",
+      "offset_s": 0,
+      "duration_s": 0.57,
+      "volume": 0.35
+    },
+    {
+      "frame": 8,
+      "file": "assets/sfx/whoosh-short.mp3",
+      "offset_s": 0,
+      "duration_s": 0.57,
+      "volume": 0.35
+    },
+    {
+      "frame": 9,
+      "file": "assets/sfx/riser.mp3",
+      "offset_s": 0,
+      "duration_s": 10.03,
+      "volume": 0.35
+    },
+    {
+      "frame": 9,
+      "file": "assets/sfx/impact-bass-1.mp3",
+      "offset_s": 0,
+      "duration_s": 2.12,
+      "volume": 0.35
+    }
+  ]
+}

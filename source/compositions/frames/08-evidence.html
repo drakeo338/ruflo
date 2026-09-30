@@ -1,0 +1,304 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-Variable.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "JetBrains Mono";
+      src: url("assets/fonts/JetBrainsMono-Variable.woff2") format("woff2");
+      font-weight: 100 800;
+      font-style: normal;
+    }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      color: #f7fbff;
+      font-family: "Inter", sans-serif;
+    }
+
+    .e08-bg {
+      position: absolute;
+      inset: 0;
+      background: #030611;
+    }
+
+    /* ---------- left column (hero + checklist) ---------- */
+    .e08-left {
+      position: absolute;
+      left: 10cqw; /* title-safe: inner 80% (x >= 192px) */
+      top: 8.6cqw;
+      width: 46cqw;
+    }
+
+    .e08-kicker-row {
+      display: flex;
+      align-items: center;
+      gap: 1cqw;
+      height: 1.4cqw;
+    }
+    .e08-rule {
+      display: block;
+      width: 36px;
+      height: 2px;
+      background: #68e4ff;
+    }
+    .e08-kicker {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      font-size: 0.9cqw;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #68e4ff;
+      white-space: nowrap;
+    }
+
+    .e08-hero-wrap {
+      margin-top: 1.4cqw;
+      min-width: 46cqw; /* >= widest state ("evidence") so the swap never jitters layout */
+      white-space: nowrap;
+      height: 9.6cqw;
+    }
+    .e08-hero-inner {
+      position: relative;
+      display: inline-block;
+      transform-origin: 0% 60%;
+    }
+    .e08-hero-text {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      font-family: "Inter", sans-serif;
+      font-weight: 900;
+      font-size: 10.4cqw;
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      text-transform: lowercase;
+      color: #f7fbff;
+    }
+    .e08-strike {
+      position: absolute;
+      z-index: 2;
+      left: 0; /* no bleed past the title-safe line on the left */
+      right: -0.6cqw;
+      top: 52%;
+      height: 0.62cqw;
+      background: #68e4ff;
+      transform-origin: left center;
+    }
+
+    .e08-caption {
+      margin-top: 1.5cqw;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      font-size: 1.15cqw;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #bdc9df;
+      white-space: nowrap;
+    }
+
+    .e08-list {
+      margin-top: 3.4cqw;
+      border-top: 1px solid #262828;
+      width: 44cqw;
+    }
+    .e08-list-head {
+      padding-top: 1.1cqw;
+    }
+    .e08-row {
+      display: flex;
+      align-items: center;
+      gap: 1.3cqw;
+      height: 4cqw;
+      border-bottom: 1px solid #262828;
+    }
+    .e08-check {
+      flex: 0 0 auto;
+      width: 2.1cqw;
+      height: 2.1cqw;
+    }
+    .e08-check path {
+      fill: none;
+      stroke: #68e4ff;
+      stroke-width: 4;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      stroke-dasharray: 1;
+    }
+    .e08-row-text {
+      font-family: "Inter", sans-serif;
+      font-weight: 700;
+      font-size: 2.2cqw;
+      letter-spacing: -0.02em;
+      text-transform: lowercase;
+      color: #f7fbff;
+      white-space: nowrap;
+    }
+
+    /* ---------- right column (ch13 document inset) ---------- */
+    .e08-doc {
+      position: absolute;
+      left: calc(90cqw - 576px); /* right edge on the title-safe line (x = 1728px) */
+      top: 12cqw;
+      width: 576px;
+    }
+    .e08-doc-frame {
+      width: 576px;
+      height: 324px;
+      overflow: hidden;
+      border: 1px solid #484f50;
+      background: #181a1a;
+    }
+    .e08-doc-img {
+      display: block;
+      width: 576px;
+      height: 324px;
+      object-fit: cover; /* 1400x788 source shown at 576x324: downscale only */
+    }
+  </style>
+
+  <div id="root" data-composition-id="08-evidence" data-width="1920" data-height="1080" data-duration="8.216">
+    <!-- full-bleed ground on its own clip layer -->
+    <div class="clip e08-bg" id="e08-bg" data-start="0" data-duration="8.216" data-track-index="0"></div>
+
+    <div class="e08-left">
+      <div class="e08-kicker-row" id="e08-kicker-row">
+        <span class="e08-rule"></span>
+        <span class="e08-kicker" id="e08-kicker">THE CLAIM</span>
+      </div>
+
+      <div class="e08-hero-wrap">
+        <span class="e08-hero-inner" id="e08-hero-inner">
+          <span class="e08-hero-text" id="e08-hero-text">“done”</span>
+          <span class="e08-strike" id="e08-strike"></span>
+        </span>
+      </div>
+
+      <div class="e08-caption" id="e08-caption">NOT A TEST RESULT</div>
+
+      <div class="e08-list" id="e08-list">
+        <div class="e08-kicker-row e08-list-head" id="e08-list-head">
+          <span class="e08-rule"></span>
+          <span class="e08-kicker">VERIFY</span>
+        </div>
+        <div class="e08-row" id="e08-row-1">
+          <svg class="e08-check" viewBox="0 0 40 40"><path id="e08-check-1" pathLength="1" d="M7 21 L16 30 L33 10" /></svg>
+          <span class="e08-row-text">tool discovery</span>
+        </div>
+        <div class="e08-row" id="e08-row-2">
+          <svg class="e08-check" viewBox="0 0 40 40"><path id="e08-check-2" pathLength="1" d="M7 21 L16 30 L33 10" /></svg>
+          <span class="e08-row-text">permissions</span>
+        </div>
+        <div class="e08-row" id="e08-row-3">
+          <svg class="e08-check" viewBox="0 0 40 40"><path id="e08-check-3" pathLength="1" d="M7 21 L16 30 L33 10" /></svg>
+          <span class="e08-row-text">actual output</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="e08-doc" id="e08-doc">
+      <div class="e08-doc-frame">
+        <img class="e08-doc-img" id="e08-doc-img" src="public/chapters/ch13.jpg" alt="" />
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      const DUR = 7.616;
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      const heroText = document.getElementById("e08-hero-text");
+      const heroInner = document.getElementById("e08-hero-inner");
+      const strike = document.getElementById("e08-strike");
+      const kicker = document.getElementById("e08-kicker");
+      const caption = document.getElementById("e08-caption");
+
+      // ---- discrete-text-sequence: in-place hard-cut state swap ----
+      const T_SWAP = 2.6;
+      const SEQUENCE = [
+        { t: 0.0, text: "“done”", color: "#F7FBFF", kicker: "THE CLAIM", caption: "NOT A TEST RESULT", strike: 1 },
+        { t: T_SWAP, text: "evidence", color: "#FFCB6B", kicker: "THE PROOF", caption: "THE CHANGE PLUS EVIDENCE", strike: 0 }, // the frame's one gold
+      ];
+      function stateAt(time) {
+        for (let i = SEQUENCE.length - 1; i >= 0; i--) {
+          if (time >= SEQUENCE[i].t) return SEQUENCE[i];
+        }
+        return SEQUENCE[0];
+      }
+
+      // Hold jitter on "evidence" only — deterministic sin-sum, driven by timeline time.
+      const T_JITTER = 3.8; // Scene 3 hold
+      function jitterAt(time) {
+        if (time < T_JITTER) return [0, 0];
+        const k = Math.min(1, (time - T_JITTER) / 0.4);
+        const dx = (Math.sin(time * 37.0) * 0.9 + Math.sin(time * 91.0) * 0.6) * k;
+        const dy = (Math.sin(time * 53.0) * 0.6 + Math.sin(time * 23.0) * 0.4) * k;
+        return [dx, dy];
+      }
+
+      // Swap punctuation: 1.06 -> 1 settle (power3.out) right after the hard cut, computed from
+      // timeline time so it is identical under any seek order (no from-state left behind).
+      const SETTLE = 0.35;
+      function settleAt(time) {
+        if (time < T_SWAP || time >= T_SWAP + SETTLE) return 1;
+        const p = (time - T_SWAP) / SETTLE;
+        return 1 + 0.06 * Math.pow(1 - p, 3);
+      }
+
+      const driver = { t: 0 };
+      function render() {
+        const s = stateAt(driver.t);
+        if (heroText.textContent !== s.text) heroText.textContent = s.text;
+        heroText.style.color = s.color;
+        kicker.textContent = s.kicker;
+        if (caption.textContent !== s.caption) caption.textContent = s.caption; // hard cut with the word swap
+        strike.style.visibility = s.strike ? "visible" : "hidden";
+        const j = jitterAt(driver.t);
+        heroInner.style.translate = j[0].toFixed(2) + "px " + j[1].toFixed(2) + "px";
+        heroInner.style.scale = settleAt(driver.t).toFixed(4);
+      }
+      render();
+      tl.to(driver, { t: DUR, duration: DUR, ease: "none", onUpdate: render }, 0);
+
+      // ---- Scene 1 (0.0–1.9): quoted "done" sets; ch13 inset settles ----
+      tl.fromTo("#e08-kicker-row", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 0.1);
+      tl.fromTo(
+        "#e08-hero-text",
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 0.55, ease: "expo.out" },
+        0.1,
+      );
+      tl.fromTo("#e08-doc", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0.3);
+
+      // ---- Scene 2 (1.9–3.8): cyan strike draws L→R, then hard cut to "evidence" ----
+      tl.fromTo("#e08-strike", { scaleX: 0 }, { scaleX: 1, duration: 0.55, ease: "expo.out" }, 1.9);
+      tl.fromTo("#e08-caption", { opacity: 0, x: -16 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 2.0);
+
+      // ---- Scene 3 (3.8–7.62): checklist, one row per spoken item ----
+      tl.fromTo("#e08-list", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power3.out" }, 3.8);
+      tl.fromTo("#e08-list-head", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out" }, 3.8);
+      const ROWS = [
+        { row: "#e08-row-1", check: "#e08-check-1", t: 4.1 },
+        { row: "#e08-row-2", check: "#e08-check-2", t: 5.0 },
+        { row: "#e08-row-3", check: "#e08-check-3", t: 7.1 },
+      ];
+      ROWS.forEach(function (r) {
+        tl.fromTo(r.row, { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out" }, r.t);
+        tl.fromTo(r.check, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.3, ease: "power3.out" }, r.t + 0.08);
+      });
+
+      window.__timelines["08-evidence"] = tl;
+    })();
+  </script>
+</template>

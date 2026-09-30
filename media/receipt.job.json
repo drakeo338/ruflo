@@ -1,0 +1,224 @@
+{
+  "contract_version": "0.1.0",
+  "job_id": "job-ruflo-explained-2026-09-30",
+  "owner": {
+    "tenant_id": "cognitum-media",
+    "owner_id": "ruflo-explainer"
+  },
+  "profile_id": "video.hyperframes-explainer",
+  "profile_version": 1,
+  "idempotency_key": "idem-ruflo-explained-2026-09-30",
+  "state": "delivered",
+  "quote_digest": "sha256:deadbeef",
+  "authorization_id": "auth-local-research",
+  "requested_deliverables": [
+    "video.web",
+    "video.master",
+    "video.poster",
+    "video.captions"
+  ],
+  "artifacts": [
+    {
+      "artifact_id": "artifact-ruflo-explained-video-web",
+      "owner": {
+        "tenant_id": "cognitum-media",
+        "owner_id": "ruflo-explainer"
+      },
+      "media_type": "video/mp4",
+      "digest": "sha256:5541a0572245804c9a213cd06b8228f4dabc34c48e1fd9e0905f38da61518089",
+      "visibility": "published",
+      "retention": {
+        "policy_id": "private-30d",
+        "retain_until_unix": 1900000000,
+        "provider_delete_required": true
+      },
+      "cost": {
+        "quoted_cost_micros": 0,
+        "actual_cost_micros": 0,
+        "currency": "USD",
+        "provider_billable_units": null
+      },
+      "provenance": {
+        "manifest_id": "manifest-ruflo-explained-2026-09-30",
+        "source_digests": [
+          "sha256:941227ff8988e98fe1c94c6155e7e1c54c52196452de7c8f4c3fde79b32fca6e",
+          "sha256:3d8f739c68116fefb0755be9fc4de4f5084b4e64e93f322a97cdddd8b138cc13",
+          "sha256:3bec4a95fe5eae049e02597a6385f25b423137572a3bb63ab2b4de7fb7b3ab36",
+          "sha256:a75902652dec227fb3a0d4a7aa668691cf1bb206f25b5ed087a97460ff5e58a5",
+          "sha256:f9c25eecf12c78e84bbf6c2062aa7c9ce99873ba83a7feacdba1942468f4f6b0",
+          "sha256:c8fdd333a1e562038f0a2521a7acfe83ed4057a5ac2d8a19ccdf28f632dcd47d",
+          "sha256:cb96f7b113758643ea50eeaa35cc7453e58e124b811442c96cb9f23d64c550fe",
+          "sha256:33f261d40cb24ba3a81780e26b9638a6b067293c259fa98b4ded9df4e2fccc72",
+          "sha256:8dfe22956cee6214e40533a06c2c7005d98e2516204191fc9594a00068c0b914",
+          "sha256:e18cf9629ca4dff50ed1059ad1c240f92d729c7d72ad3239051346f8a12ad9b3",
+          "sha256:8adc53c87f2ff0d08cc334c1f3087614e42a2f36986d9622d1805bfd938d5617",
+          "sha256:fba60635891bf0fff55643f306603c3d408fced5c031fdba086783b39a8f55cd",
+          "sha256:86fdfdab86313a1645a183cb240768dda59fa0b15b5a52448b44934968b2427a",
+          "sha256:7c968fa507101baeccbd03224e3b0d2c7096aae094ad0df41428fb0d6a10b653",
+          "sha256:74e2080ef193d4181323840db75dc2ed4f499790ff8c96526e6cee112177563b",
+          "sha256:b3da54c9075f786f27295b8d1047de0c3f4166464a42a413a000c71ac53f3145"
+        ],
+        "output_digest": "sha256:5541a0572245804c9a213cd06b8228f4dabc34c48e1fd9e0905f38da61518089",
+        "provider_id": "hyperframes-local",
+        "model_id": "hyperframes@0.8.97",
+        "operation_id": "hyperframes.render",
+        "operation_version": 1,
+        "rights_references": [
+          "rights-ruflo-article-rUv-cohen"
+        ]
+      }
+    },
+    {
+      "artifact_id": "artifact-ruflo-explained-video-master",
+      "owner": {
+        "tenant_id": "cognitum-media",
+        "owner_id": "ruflo-explainer"
+      },
+      "media_type": "video/mp4",
+      "digest": "sha256:ef136de6ef2c36afedc40168f7237a56b0df8e524656b98c82d3fe1099a436f3",
+      "visibility": "private",
+      "retention": {
+        "policy_id": "private-30d",
+        "retain_until_unix": 1900000000,
+        "provider_delete_required": true
+      },
+      "cost": {
+        "quoted_cost_micros": 0,
+        "actual_cost_micros": 0,
+        "currency": "USD",
+        "provider_billable_units": null
+      },
+      "provenance": {
+        "manifest_id": "manifest-ruflo-explained-2026-09-30",
+        "source_digests": [
+          "sha256:941227ff8988e98fe1c94c6155e7e1c54c52196452de7c8f4c3fde79b32fca6e",
+          "sha256:3d8f739c68116fefb0755be9fc4de4f5084b4e64e93f322a97cdddd8b138cc13",
+          "sha256:3bec4a95fe5eae049e02597a6385f25b423137572a3bb63ab2b4de7fb7b3ab36",
+          "sha256:a75902652dec227fb3a0d4a7aa668691cf1bb206f25b5ed087a97460ff5e58a5",
+          "sha256:f9c25eecf12c78e84bbf6c2062aa7c9ce99873ba83a7feacdba1942468f4f6b0",
+          "sha256:c8fdd333a1e562038f0a2521a7acfe83ed4057a5ac2d8a19ccdf28f632dcd47d",
+          "sha256:cb96f7b113758643ea50eeaa35cc7453e58e124b811442c96cb9f23d64c550fe",
+          "sha256:33f261d40cb24ba3a81780e26b9638a6b067293c259fa98b4ded9df4e2fccc72",
+          "sha256:8dfe22956cee6214e40533a06c2c7005d98e2516204191fc9594a00068c0b914",
+          "sha256:e18cf9629ca4dff50ed1059ad1c240f92d729c7d72ad3239051346f8a12ad9b3",
+          "sha256:8adc53c87f2ff0d08cc334c1f3087614e42a2f36986d9622d1805bfd938d5617",
+          "sha256:fba60635891bf0fff55643f306603c3d408fced5c031fdba086783b39a8f55cd",
+          "sha256:86fdfdab86313a1645a183cb240768dda59fa0b15b5a52448b44934968b2427a",
+          "sha256:7c968fa507101baeccbd03224e3b0d2c7096aae094ad0df41428fb0d6a10b653",
+          "sha256:74e2080ef193d4181323840db75dc2ed4f499790ff8c96526e6cee112177563b",
+          "sha256:b3da54c9075f786f27295b8d1047de0c3f4166464a42a413a000c71ac53f3145"
+        ],
+        "output_digest": "sha256:ef136de6ef2c36afedc40168f7237a56b0df8e524656b98c82d3fe1099a436f3",
+        "provider_id": "hyperframes-local",
+        "model_id": "hyperframes@0.8.97",
+        "operation_id": "hyperframes.render",
+        "operation_version": 1,
+        "rights_references": [
+          "rights-ruflo-article-rUv-cohen"
+        ]
+      }
+    },
+    {
+      "artifact_id": "artifact-ruflo-explained-video-poster",
+      "owner": {
+        "tenant_id": "cognitum-media",
+        "owner_id": "ruflo-explainer"
+      },
+      "media_type": "image/jpeg",
+      "digest": "sha256:f3c8b0a95a69c03f8a11789b0104cfbf7775f7b8a2343de8fa644569198e8f5d",
+      "visibility": "published",
+      "retention": {
+        "policy_id": "private-30d",
+        "retain_until_unix": 1900000000,
+        "provider_delete_required": true
+      },
+      "cost": {
+        "quoted_cost_micros": 0,
+        "actual_cost_micros": 0,
+        "currency": "USD",
+        "provider_billable_units": null
+      },
+      "provenance": {
+        "manifest_id": "manifest-ruflo-explained-2026-09-30",
+        "source_digests": [
+          "sha256:941227ff8988e98fe1c94c6155e7e1c54c52196452de7c8f4c3fde79b32fca6e",
+          "sha256:3d8f739c68116fefb0755be9fc4de4f5084b4e64e93f322a97cdddd8b138cc13",
+          "sha256:3bec4a95fe5eae049e02597a6385f25b423137572a3bb63ab2b4de7fb7b3ab36",
+          "sha256:a75902652dec227fb3a0d4a7aa668691cf1bb206f25b5ed087a97460ff5e58a5",
+          "sha256:f9c25eecf12c78e84bbf6c2062aa7c9ce99873ba83a7feacdba1942468f4f6b0",
+          "sha256:c8fdd333a1e562038f0a2521a7acfe83ed4057a5ac2d8a19ccdf28f632dcd47d",
+          "sha256:cb96f7b113758643ea50eeaa35cc7453e58e124b811442c96cb9f23d64c550fe",
+          "sha256:33f261d40cb24ba3a81780e26b9638a6b067293c259fa98b4ded9df4e2fccc72",
+          "sha256:8dfe22956cee6214e40533a06c2c7005d98e2516204191fc9594a00068c0b914",
+          "sha256:e18cf9629ca4dff50ed1059ad1c240f92d729c7d72ad3239051346f8a12ad9b3",
+          "sha256:8adc53c87f2ff0d08cc334c1f3087614e42a2f36986d9622d1805bfd938d5617",
+          "sha256:fba60635891bf0fff55643f306603c3d408fced5c031fdba086783b39a8f55cd",
+          "sha256:86fdfdab86313a1645a183cb240768dda59fa0b15b5a52448b44934968b2427a",
+          "sha256:7c968fa507101baeccbd03224e3b0d2c7096aae094ad0df41428fb0d6a10b653",
+          "sha256:74e2080ef193d4181323840db75dc2ed4f499790ff8c96526e6cee112177563b",
+          "sha256:b3da54c9075f786f27295b8d1047de0c3f4166464a42a413a000c71ac53f3145"
+        ],
+        "output_digest": "sha256:f3c8b0a95a69c03f8a11789b0104cfbf7775f7b8a2343de8fa644569198e8f5d",
+        "provider_id": "hyperframes-local",
+        "model_id": "hyperframes@0.8.97",
+        "operation_id": "hyperframes.render",
+        "operation_version": 1,
+        "rights_references": [
+          "rights-ruflo-article-rUv-cohen"
+        ]
+      }
+    },
+    {
+      "artifact_id": "artifact-ruflo-explained-video-captions",
+      "owner": {
+        "tenant_id": "cognitum-media",
+        "owner_id": "ruflo-explainer"
+      },
+      "media_type": "text/vtt",
+      "digest": "sha256:8d2899a733e44ca64857a8c9dbdf936c85f8eb3a07e1f8a5c60f1a85be8153e4",
+      "visibility": "published",
+      "retention": {
+        "policy_id": "private-30d",
+        "retain_until_unix": 1900000000,
+        "provider_delete_required": true
+      },
+      "cost": {
+        "quoted_cost_micros": 0,
+        "actual_cost_micros": 0,
+        "currency": "USD",
+        "provider_billable_units": null
+      },
+      "provenance": {
+        "manifest_id": "manifest-ruflo-explained-2026-09-30",
+        "source_digests": [
+          "sha256:941227ff8988e98fe1c94c6155e7e1c54c52196452de7c8f4c3fde79b32fca6e",
+          "sha256:3d8f739c68116fefb0755be9fc4de4f5084b4e64e93f322a97cdddd8b138cc13",
+          "sha256:3bec4a95fe5eae049e02597a6385f25b423137572a3bb63ab2b4de7fb7b3ab36",
+          "sha256:a75902652dec227fb3a0d4a7aa668691cf1bb206f25b5ed087a97460ff5e58a5",
+          "sha256:f9c25eecf12c78e84bbf6c2062aa7c9ce99873ba83a7feacdba1942468f4f6b0",
+          "sha256:c8fdd333a1e562038f0a2521a7acfe83ed4057a5ac2d8a19ccdf28f632dcd47d",
+          "sha256:cb96f7b113758643ea50eeaa35cc7453e58e124b811442c96cb9f23d64c550fe",
+          "sha256:33f261d40cb24ba3a81780e26b9638a6b067293c259fa98b4ded9df4e2fccc72",
+          "sha256:8dfe22956cee6214e40533a06c2c7005d98e2516204191fc9594a00068c0b914",
+          "sha256:e18cf9629ca4dff50ed1059ad1c240f92d729c7d72ad3239051346f8a12ad9b3",
+          "sha256:8adc53c87f2ff0d08cc334c1f3087614e42a2f36986d9622d1805bfd938d5617",
+          "sha256:fba60635891bf0fff55643f306603c3d408fced5c031fdba086783b39a8f55cd",
+          "sha256:86fdfdab86313a1645a183cb240768dda59fa0b15b5a52448b44934968b2427a",
+          "sha256:7c968fa507101baeccbd03224e3b0d2c7096aae094ad0df41428fb0d6a10b653",
+          "sha256:74e2080ef193d4181323840db75dc2ed4f499790ff8c96526e6cee112177563b",
+          "sha256:b3da54c9075f786f27295b8d1047de0c3f4166464a42a413a000c71ac53f3145"
+        ],
+        "output_digest": "sha256:8d2899a733e44ca64857a8c9dbdf936c85f8eb3a07e1f8a5c60f1a85be8153e4",
+        "provider_id": "hyperframes-local",
+        "model_id": "hyperframes@0.8.97",
+        "operation_id": "hyperframes.render",
+        "operation_version": 1,
+        "rights_references": [
+          "rights-ruflo-article-rUv-cohen"
+        ]
+      }
+    }
+  ],
+  "created_at_unix": 1790796000,
+  "updated_at_unix": 1790796000
+}

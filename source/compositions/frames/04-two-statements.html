@@ -1,0 +1,281 @@
+<template id="04-two-statements-template">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/Inter-Variable.woff2") format("woff2");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "JetBrains Mono";
+      src: url("assets/fonts/JetBrainsMono-Variable.woff2") format("woff2");
+      font-weight: 100 800;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      color: #f7fbff;
+      font-family: "Inter", sans-serif;
+    }
+
+    /* full-bleed ground — a clip layer, not a root background */
+    .s04-ground {
+      position: absolute;
+      inset: 0;
+      background: #030611;
+    }
+
+    /* background continuity: frame 03's four-card stage (same geometry + camera origin), far back.
+       Two layers: outer carries the recede scale, inner carries blur + dim. */
+    .s04-ghost-row {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 44%;
+      z-index: 1;
+    }
+    .s04-ghost-plane {
+      --dof: 2px;
+      position: absolute;
+      left: 144px;
+      top: 250px;
+      width: 1632px;
+      height: 440px;
+      filter: blur(var(--dof));
+      will-change: filter;
+    }
+    .s04-ghost-card {
+      position: absolute;
+      top: 0;
+      width: 384px;
+      height: 440px;
+      box-sizing: border-box;
+      border: 1px solid #bdc9df;
+    }
+
+    /* the two statements — outer layer carries the wing travel (x),
+       inner layer carries the focus-pull (blur + opacity) */
+    .s04-statement {
+      position: absolute;
+      top: 330px;
+      width: 760px;
+      z-index: 3;
+    }
+    .s04-statement-text {
+      --dof: 0px;
+      font-weight: 700;
+      font-size: 4.5cqw;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      text-transform: lowercase;
+      color: #f7fbff;
+      filter: blur(var(--dof));
+      will-change: filter;
+    }
+    .s04-left {
+      left: 105px;
+      text-align: right;
+    }
+    .s04-right {
+      left: 1055px;
+      text-align: left;
+    }
+    .s04-q {
+      color: #484f50;
+      font-weight: 900;
+    }
+
+    /* vertical hairline separator */
+    .s04-rule-svg {
+      position: absolute;
+      left: 959px;
+      top: 185px;
+      width: 2px;
+      height: 480px;
+      overflow: visible;
+      z-index: 2;
+    }
+    .s04-rule-svg line {
+      stroke: #262828;
+      stroke-width: 1;
+      fill: none;
+    }
+    .s04-rule-svg line.s04-rule-lit {
+      stroke: #bdc9df;
+      stroke-opacity: 0.55;
+    }
+
+    /* the payoff mark */
+    .s04-neq-wrap {
+      position: absolute;
+      left: 900px;
+      top: 345px;
+      width: 120px;
+      height: 160px;
+      z-index: 4;
+    }
+    .s04-neq-gap {
+      position: absolute;
+      inset: 0;
+      background: #030611;
+    }
+    .s04-neq {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 7.2cqw;
+      line-height: 1;
+      color: #68e4ff;
+    }
+
+    .s04-caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 720px;
+      text-align: center;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      font-size: 0.9cqw;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #bdc9df;
+      z-index: 4;
+    }
+  </style>
+
+  <div id="root" data-composition-id="04-two-statements" data-width="1920" data-height="1080" data-duration="6.267">
+    <div
+      id="s04-ground"
+      class="clip s04-ground"
+      data-start="0"
+      data-duration="6.267"
+      data-track-index="0"
+    ></div>
+
+    <div id="s04-ghost-row" class="s04-ghost-row">
+      <div id="s04-ghost-plane" class="s04-ghost-plane">
+        <div class="s04-ghost-card" style="left: 0px"></div>
+        <div class="s04-ghost-card" style="left: 416px"></div>
+        <div class="s04-ghost-card" style="left: 832px"></div>
+        <div class="s04-ghost-card" style="left: 1248px"></div>
+      </div>
+    </div>
+
+    <svg class="s04-rule-svg" viewBox="0 0 2 480" xmlns="http://www.w3.org/2000/svg">
+      <line id="s04-rule" class="s04-rule-lit" x1="1" y1="0" x2="1" y2="480" />
+    </svg>
+
+    <div id="s04-left" class="s04-statement s04-left">
+      <div id="s04-left-text" class="s04-statement-text">
+        <span class="s04-q">&ldquo;</span>i installed<br />the skill<span class="s04-q">&rdquo;</span>
+      </div>
+    </div>
+
+    <div id="s04-right" class="s04-statement s04-right">
+      <div id="s04-right-text" class="s04-statement-text">
+        <span class="s04-q">&ldquo;</span>the mcp server<br />is connected<span class="s04-q">&rdquo;</span>
+      </div>
+    </div>
+
+    <div id="s04-neq-wrap" class="s04-neq-wrap">
+      <div id="s04-neq-gap" class="s04-neq-gap"></div>
+      <div id="s04-neq" class="s04-neq">&ne;</div>
+    </div>
+
+    <div id="s04-caption" class="s04-caption">two different statements</div>
+  </div>
+
+  <script>
+    (function () {
+      var FID = "04-two-statements";
+      var DURATION = 5.867;
+      var tl = gsap.timeline({ paused: true });
+
+      // measured hairline length for the draw
+      var rule = document.querySelector("#s04-rule");
+      var len = 480;
+      try {
+        var m = rule.getTotalLength();
+        if (m && isFinite(m)) len = m;
+      } catch (e) {}
+      rule.style.strokeDasharray = len + "";
+
+      // ── Background continuity: the four-card stage recedes (0.0–1.4s)
+      tl.fromTo(
+        "#s04-ghost-row",
+        { scale: 1.022 },
+        { scale: 0.92, duration: 1.4, ease: "power3.out" },
+        0
+      );
+      tl.fromTo(
+        "#s04-ghost-plane",
+        { "--dof": "2px", opacity: 0.4 },
+        { "--dof": "10px", opacity: 0.15, duration: 1.4, ease: "power3.out" },
+        0
+      );
+
+      // ── Scene 1 (0.0–1.9s): left statement from the left wing, focus-pull sharp on "installed"@0.1
+      tl.fromTo("#s04-left", { x: -140 }, { x: 0, duration: 1.0, ease: "power3.out" }, 0.1);
+      tl.fromTo(
+        "#s04-left-text",
+        { opacity: 0, "--dof": "16px" },
+        { opacity: 1, "--dof": "0px", duration: 1.0, ease: "power3.out" },
+        0.1
+      );
+      // hairline draws top → bottom down the center
+      tl.fromTo(
+        "#s04-rule",
+        { strokeDashoffset: len },
+        { strokeDashoffset: 0, duration: 0.8, ease: "power3.out" },
+        0.35
+      );
+
+      // ── Scene 2 (1.9–4.4s): right statement from the right wing, focus-pull sharp on "the MCP server"@2.2
+      tl.fromTo("#s04-right", { x: 140 }, { x: 0, duration: 1.0, ease: "power3.out" }, 2.2);
+      tl.fromTo(
+        "#s04-right-text",
+        { opacity: 0, "--dof": "16px" },
+        { opacity: 1, "--dof": "0px", duration: 1.0, ease: "power3.out" },
+        2.2
+      );
+
+      // ── Scene 3 (4.4–5.87s): "≠" lands on the separator @4.6 (expo.out), caption sets under it on "different"@4.72
+      tl.fromTo(
+        "#s04-neq-gap",
+        { scaleY: 0 },
+        { scaleY: 1, duration: 0.35, ease: "expo.out" },
+        4.6
+      );
+      tl.fromTo(
+        "#s04-neq",
+        { scale: 1.7, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.7, ease: "expo.out" },
+        4.6
+      );
+      tl.fromTo(
+        "#s04-caption",
+        { y: 14, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" },
+        4.72
+      );
+
+      // hold still to the fixed duration (breather)
+      tl.set({}, {}, DURATION);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
