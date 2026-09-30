@@ -6,6 +6,8 @@ import { createRemoteJWKSet, jwtVerify } from 'jose';
 const ISSUER = 'https://ruvector-edge-auth.cognitum-consulting-mail.workers.dev';
 const RESOURCE = 'https://ruvector-edge-gateway.cognitum-consulting-mail.workers.dev/v1';
 const shouldClaim = process.env.RUFLO_AI_TEAM_E2E_CLAIM_EDGE === '1';
+const checkRevocation = process.env.RUFLO_AI_TEAM_E2E_REVOKE_REFRESH === '1';
+const scopes = `ruvector:read ruvector:write${checkRevocation ? ' offline_access' : ''}`;
 const b64u = (value) => Buffer.from(value).toString('base64url');
 const verifier = b64u(randomBytes(48));
 const state = b64u(randomBytes(32));
@@ -33,8 +35,8 @@ try {
   const registrationResponse = await fetch(metadata.registration_endpoint, {
     method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ redirect_uris: [redirect], client_name: 'RuFlo AI Team Edge tenant validation',
-      token_endpoint_auth_method: 'none', grant_types: ['authorization_code'],
-      response_types: ['code'], scope: 'ruvector:read ruvector:write' }),
+      token_endpoint_auth_method: 'none', grant_types: checkRevocation ? ['authorization_code', 'refresh_token'] : ['authorization_code'],
+      response_types: ['code'], scope: scopes }),
   });
   if (!registrationResponse.ok) throw new Error(`registration ${registrationResponse.status}`);
   const registration = await registrationResponse.json();
@@ -42,7 +44,7 @@ try {
   const authUrl = new URL(metadata.authorization_endpoint);
   for (const [key, value] of Object.entries({ response_type: 'code', client_id: registration.client_id,
     redirect_uri: redirect, code_challenge: challenge, code_challenge_method: 'S256', state,
-    resource: RESOURCE, scope: 'ruvector:read ruvector:write' })) authUrl.searchParams.set(key, value);
+    resource: RESOURCE, scope: scopes })) authUrl.searchParams.set(key, value);
   console.log(`OPEN_FOR_USER_LOGIN ${authUrl}`);
   const code = await Promise.race([codePromise, new Promise((_, reject) => {
     timer = setTimeout(() => reject(new Error('login timed out')), 600_000);
@@ -79,6 +81,25 @@ try {
     const usage = await request('/usage');
     console.log(JSON.stringify({ tenantFingerprint, claimedBefore: before.claimed, claimedAfter: after.claimed,
       role: after.role, usage }));
+    if (checkRevocation) {
+      if (!token.refresh_token) throw new Error('offline_access did not return a refresh token');
+      const revokeResponse = await fetch(metadata.revocation_endpoint, {
+        method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ token: token.refresh_token, client_id: registration.client_id,
+          token_type_hint: 'refresh_token' }),
+      });
+      if (revokeResponse.status !== 200) throw new Error(`revoke ${revokeResponse.status}`);
+      const retryResponse = await fetch(metadata.token_endpoint, {
+        method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ grant_type: 'refresh_token', client_id: registration.client_id,
+          refresh_token: token.refresh_token, resource: RESOURCE }),
+      });
+      const retry = await retryResponse.json().catch(() => ({}));
+      if (retryResponse.status !== 400 || retry.error !== 'invalid_grant') {
+        throw new Error(`revoked refresh unexpectedly usable: ${retryResponse.status}:${retry.error || 'unknown'}`);
+      }
+      console.log(JSON.stringify({ refreshRevocation: 'passed', accessTokenRevocation: 'not_supported_jwt_expires' }));
+    }
   }
 } finally {
   clearTimeout(timer);
